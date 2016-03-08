@@ -49,7 +49,7 @@ namespace SensorbergShowcase.Pages
             DependencyProperty.Register("BeaconDetailsControlWidth", typeof(double), typeof(MainPage),
                 new PropertyMetadata(DefaultBeaconDetailsControlWidth));
  
-        public bool ScannerAreEventsHooked
+        public bool HaveScannerSpecificEventsBeenHooked
         {
             get;
             private set;
@@ -110,32 +110,30 @@ namespace SensorbergShowcase.Pages
         }
 
         /// <summary>
-        /// Hooks the scanner events. Does nothing, if already hooked.
+        /// Hooks/unhooks the scanner specific events. Does nothing, if already hooked/unhooked.
         /// </summary>
-        private void HookScannerSpecificEvents()
+        /// <param name="hook">If true, will hook the events. If false, will unhook.</param>
+        private void SetScannerSpecificEvents(bool hook)
         {
-            if (!ScannerAreEventsHooked)
+            if (HaveScannerSpecificEventsBeenHooked != hook)
             {
+                System.Diagnostics.Debug.WriteLine("MainPage.SetScannerSpecificEvents: " + HaveScannerSpecificEventsBeenHooked + " -> " + hook);
                 Scanner scanner = _sdkManager.Scanner;
-                scanner.BeaconEvent += OnBeaconEventAsync;
-                scanner.BeaconNotSeenForAWhile += OnBeaconNotSeenForAWhileAsync;
-                BeaconModel.BeaconDetailsCollection.CollectionChanged += OnBeaconDetailsCollectionChanged;
-                ScannerAreEventsHooked = true;
-            }
-        }
 
-        /// <summary>
-        /// Unhooks the scanner events. Does nothing, if not hooked.
-        /// </summary>
-        private void UnhookScannerSpecificEvents()
-        {
-            if (ScannerAreEventsHooked)
-            {
-                Scanner scanner = _sdkManager.Scanner;
-                scanner.BeaconEvent -= OnBeaconEventAsync;
-                scanner.BeaconNotSeenForAWhile -= OnBeaconNotSeenForAWhileAsync;
-                BeaconModel.BeaconDetailsCollection.CollectionChanged -= OnBeaconDetailsCollectionChanged;
-                ScannerAreEventsHooked = false;
+                if (hook)
+                {
+                    scanner.BeaconEvent += OnBeaconEventAsync;
+                    scanner.BeaconNotSeenForAWhile += OnBeaconNotSeenForAWhileAsync;
+                    BeaconModel.BeaconDetailsCollection.CollectionChanged += OnBeaconDetailsCollectionChanged;
+                }
+                else
+                {
+                    scanner.BeaconEvent -= OnBeaconEventAsync;
+                    scanner.BeaconNotSeenForAWhile -= OnBeaconNotSeenForAWhileAsync;
+                    BeaconModel.BeaconDetailsCollection.CollectionChanged -= OnBeaconDetailsCollectionChanged;
+                }
+
+                HaveScannerSpecificEventsBeenHooked = hook;
             }
         }
 
@@ -148,12 +146,12 @@ namespace SensorbergShowcase.Pages
             if (isScannerRunning)
             {
                 toggleScanButton.IsChecked = true;
-                toggleScanButton.Label = ResourceLoader.GetString("stopScanner/Label");
+                toggleScanButton.Label = App.ResourceLoader.GetString("stopScanner/Label");
             }
             else
             {
                 toggleScanButton.IsChecked = false;
-                toggleScanButton.Label = ResourceLoader.GetString("startScanner/Label");
+                toggleScanButton.Label = App.ResourceLoader.GetString("startScanner/Label");
             }
 
             toggleScanButton.IsEnabled = true;
@@ -165,7 +163,7 @@ namespace SensorbergShowcase.Pages
         /// <param name="beaconCount">The number of beacons currently around.</param>
         private void UpdateBeaconCountInHeader(int beaconCount)
         {
-            string scannerWithBeaconCountText = ResourceLoader.GetString("scannerWithBeaconCount/Text");
+            string scannerWithBeaconCountText = App.ResourceLoader.GetString("scannerWithBeaconCount/Text");
             HeaderWithBeaconCount = string.Format(scannerWithBeaconCountText, beaconCount);
         }
 
@@ -243,7 +241,7 @@ namespace SensorbergShowcase.Pages
                 }
                 else
                 {
-                    HookScannerSpecificEvents(); // Make sure the events are hooked
+                    SetScannerSpecificEvents(true); // Make sure the events are hooked
                     _sdkManager.StartScanner();
                 }
             });
@@ -262,7 +260,7 @@ namespace SensorbergShowcase.Pages
                 {
                     case ScannerStatus.Stopped:
                         // Uncomment the following to unhook the scanner events when stopped
-                        //UnhookScannerSpecificEvents();
+                        //SetScannerSpecificEvents(false);
                         break;
 
                     case ScannerStatus.Started:
@@ -278,16 +276,16 @@ namespace SensorbergShowcase.Pages
                         if (_bluetoothNotOnDialogOperation == null)
                         {
                             MessageDialog messageDialog = new MessageDialog(
-                                ResourceLoader.GetString("enableBluetoothPrompt/Text"),
-                                ResourceLoader.GetString("failedToStartWatcher/Text"));
+                                App.ResourceLoader.GetString("enableBluetoothPrompt/Text"),
+                                App.ResourceLoader.GetString("failedToStartWatcher/Text"));
 
-                            messageDialog.Commands.Add(new UICommand(ResourceLoader.GetString("yes/Text"),
+                            messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("yes/Text"),
                                 new UICommandInvokedHandler((command) =>
                                 {
                                     _sdkManager.LaunchBluetoothSettingsAsync();
                                 })));
 
-                            messageDialog.Commands.Add(new UICommand(ResourceLoader.GetString("no/Text"),
+                            messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("no/Text"),
                                 new UICommandInvokedHandler((command) =>
                                 {
                                     _sdkManager.StopScanner();

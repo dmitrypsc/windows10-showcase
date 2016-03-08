@@ -120,6 +120,12 @@
   <data name="advertise.Text" xml:space="preserve">
     <value>advertise</value>
   </data>
+  <data name="backgroundTaskFiltersUpdated.Text" xml:space="preserve">
+    <value>Background task filters updated successfully with the new beacon identifiers</value>
+  </data>
+  <data name="checkStatus.Label" xml:space="preserve">
+    <value>check status</value>
+  </data>
   <data name="enableBluetoothPrompt.Text" xml:space="preserve">
     <value>Do you wish to enable Bluetooth on this device?</value>
   </data>
@@ -135,20 +141,38 @@
   <data name="scanner.Text" xml:space="preserve">
     <value>scanner</value>
   </data>
+  <data name="scannerStopped.Text" xml:space="preserve">
+    <value>Scanner is stopped</value>
+  </data>
   <data name="scannerWithBeaconCount.Text" xml:space="preserve">
     <value>scanner ({0})</value>
+  </data>
+  <data name="scanning.Text" xml:space="preserve">
+    <value>Scanning...</value>
+  </data>
+  <data name="scanningForQrCode.Text" xml:space="preserve">
+    <value>scanning for QR code...</value>
   </data>
   <data name="settings.Text" xml:space="preserve">
     <value>settings</value>
   </data>
+  <data name="startAdvertising.Label" xml:space="preserve">
+    <value>start advertising</value>
+  </data>
   <data name="startScanner.Label" xml:space="preserve">
     <value>start scanner</value>
+  </data>
+  <data name="stopAdvertising.Label" xml:space="preserve">
+    <value>stop advertising</value>
   </data>
   <data name="stopScanner.Label" xml:space="preserve">
     <value>stop scanner</value>
   </data>
   <data name="toggleScanner.Label" xml:space="preserve">
     <value>toggle scanner</value>
+  </data>
+  <data name="updateSuccessful.Text" xml:space="preserve">
+    <value>Update successful</value>
   </data>
   <data name="yes.Text" xml:space="preserve">
     <value>yes</value>

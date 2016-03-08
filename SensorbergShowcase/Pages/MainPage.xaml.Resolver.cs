@@ -1,8 +1,6 @@
 ﻿using SensorbergSDK;
 using System;
 using System.Diagnostics;
-using Windows.Foundation;
-using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,6 +13,12 @@ namespace SensorbergShowcase.Pages
     public sealed partial class MainPage : Page
     {
         private bool _messageDialogIsOpen;
+
+        public bool HaveResolverSpecificEventsBeenHooked
+        {
+            get;
+            private set;
+        }
 
         public bool IsLayoutValid
         {
@@ -31,23 +35,34 @@ namespace SensorbergShowcase.Pages
             DependencyProperty.Register("IsLayoutValid", typeof(bool), typeof(MainPage),
                 new PropertyMetadata(false));
 
-
         /// <summary>
-        /// Hooks the resolver specific events.
+        /// Hooks/unhooks the resolver specific events. If already hooked/unhooked, does nothing.
         /// </summary>
-        private void HookResolverEvents()
+        /// <param name="hook">If true, will hook the events. If false, will unhook.</param>
+        private void SetResolverSpecificEvents(bool hook)
         {
-            _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
-            _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
+            if (HaveResolverSpecificEventsBeenHooked != hook)
+            {
+                Debug.WriteLine("MainPage.SetResolverSpecificEvents: " + HaveResolverSpecificEventsBeenHooked + " -> " + hook);
+
+                if (hook)
+                {
+                    _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
+                    _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
+                }
+                else
+                {
+                    _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
+                    _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
+                }
+
+                HaveResolverSpecificEventsBeenHooked = hook;
+            }
         }
 
-        /// <summary>
-        /// Unhooks the resolver specific events.
-        /// </summary>
-        private void UnhookResolverEvents()
+        private void OnCheckStatusButtonClicked(object sender, RoutedEventArgs e)
         {
-            _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
-            _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
+            // TODO
         }
 
         private void OnBeaconLayoutValidityChanged(object sender, bool e)
@@ -67,24 +82,24 @@ namespace SensorbergShowcase.Pages
                 return;
             }
 
-
             MessageDialog messageDialog = e.ToMessageDialog();
 
             switch (e.Type)
             {
                 case BeaconActionType.UrlMessage:
                 case BeaconActionType.VisitWebsite:
-                    messageDialog.Commands.Add(new UICommand("Yes",
+                    messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("yes/Text"),
                         new UICommandInvokedHandler(async (command) =>
                         {
                             await Windows.System.Launcher.LaunchUriAsync(new Uri(e.Url));
                         })));
 
-                    messageDialog.Commands.Add(new UICommand("No"));
+                    messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("no/Text")));
 
 
                     Debug.WriteLine("Message dialog is open");
                     _messageDialogIsOpen = true;
+
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
                         try
@@ -93,19 +108,17 @@ namespace SensorbergShowcase.Pages
                         }
                         catch
                         {
-                            //For showing more than one message dialog at one time.
+                            // For showing more than one message dialog at one time.
                         }
                     });
 
                     Debug.WriteLine("Message dialog is closed");
                     _messageDialogIsOpen = false;
-
-
                     break;
 
                 case BeaconActionType.InApp:
-
                     _messageDialogIsOpen = true;
+
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
                         try
@@ -114,11 +127,11 @@ namespace SensorbergShowcase.Pages
                         }
                         catch
                         {
-                            //For showing more than one message dialog at one time.
+                            // For showing more than one message dialog at one time.
                         }
                     });
-                    _messageDialogIsOpen = false;
 
+                    _messageDialogIsOpen = false;
                     break;
             }
         }

@@ -1,6 +1,5 @@
 ﻿using SensorbergSDK;
 using System;
-using Windows.ApplicationModel.Resources;
 using Windows.Graphics.Display;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -40,19 +39,12 @@ namespace SensorbergShowcase.Pages
             DependencyProperty.Register("IsBigScreen", typeof(bool), typeof(MainPage),
                 new PropertyMetadata(false));
 
-        public ResourceLoader ResourceLoader
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>
         public MainPage()
         {
             InitializeComponent();
-            ResourceLoader = new ResourceLoader();
 
             double displaySize = ResolveDisplaySizeInInches();
             System.Diagnostics.Debug.WriteLine("Display size is " + displaySize + " inches");
@@ -69,7 +61,7 @@ namespace SensorbergShowcase.Pages
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo()");
+            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo");
             base.OnNavigatedTo(e);
 
             if (_sdkManager == null)
@@ -97,6 +89,15 @@ namespace SensorbergShowcase.Pages
             }
 
             LoadApplicationSettings();
+
+            if (QrCodeScannerPage.ScannedQrCode != null)
+            {
+                System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
+                // TODO: Display Settings pivot item when running on phone
+                ApiKey = QrCodeScannerPage.ScannedQrCode;
+                SaveApplicationSettings(KeyApiKey);
+            }
+
             ValidateApiKeyAsync();
 
             if (_advertiser == null)
@@ -107,7 +108,7 @@ namespace SensorbergShowcase.Pages
             }
 
             toggleScanButton.IsEnabled = false;
-            HookScannerSpecificEvents();
+            SetScannerSpecificEvents(true);
             _sdkManager.StartScanner();
 
             Window.Current.VisibilityChanged += OnVisibilityChanged;
@@ -115,14 +116,14 @@ namespace SensorbergShowcase.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedFrom()");
+            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedFrom");
 
             Window.Current.VisibilityChanged -= OnVisibilityChanged;
 
             _sdkManager.LayoutValidityChanged -= OnBeaconLayoutValidityChanged;
             _sdkManager.BackgroundFiltersUpdated -= OnBackgroundFiltersUpdatedAsync;
 
-            UnhookScannerSpecificEvents();
+            SetScannerSpecificEvents(false);
 
             if (_sdkManager.IsScannerStarted)
             {
@@ -146,11 +147,11 @@ namespace SensorbergShowcase.Pages
 
             if (_appIsOnForeground)
             {
-                HookScannerSpecificEvents();
+                SetScannerSpecificEvents(true);
             }
             else
             {
-                UnhookScannerSpecificEvents();
+                SetScannerSpecificEvents(false);
             }
         }
 
@@ -162,7 +163,7 @@ namespace SensorbergShowcase.Pages
         private async void ShowInformationalMessageDialogAsync(string message, string title = null)
         {
             MessageDialog messageDialog = (title == null) ? new MessageDialog(message) : new MessageDialog(message, title);
-            messageDialog.Commands.Add(new UICommand(ResourceLoader.GetString("ok/Text")));
+            messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("ok/Text")));
             await messageDialog.ShowAsync();
         }
 
@@ -195,8 +196,8 @@ namespace SensorbergShowcase.Pages
         private async void OnBackgroundFiltersUpdatedAsync(object sender, EventArgs e)
         {
             MessageDialog messageDialog = new MessageDialog(
-                "Background task filters updated successfully with the new beacon identifiers",
-                "Update successful");
+                App.ResourceLoader.GetString("backgroundTaskFiltersUpdated/Text"),
+                App.ResourceLoader.GetString("updateSuccessful/Text"));
             await messageDialog.ShowAsync();
         }
 

@@ -3,10 +3,6 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using System;
-using System.ServiceModel.Channels;
-using Windows.UI.Core;
-using Windows.UI.Popups;
-using SensorbergShowcase.Controls;
 
 namespace SensorbergShowcase.Pages
 {
@@ -20,17 +16,14 @@ namespace SensorbergShowcase.Pages
         private const string KeyApiKey = "api_key";
         private const string KeyEmail = "email";
         private const string KeyPassword = "password";
-        private const string KeyBeaconId1 = "beacon_id1";
-        private const string KeyBeaconId2 = "beaconId2";
-        private const string KeyBeaconId3 = "beaconId3";
+        private const string KeyBeaconId1 = "beacon_id_1";
+        private const string KeyBeaconId2 = "beacon_id_2";
+        private const string KeyBeaconId3 = "beacon_id_3";
 
         private ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
         private ApiKeyHelper _apiKeyHelper = new ApiKeyHelper();
         private bool _enableActionsSwitchToggledByUser = true;
         private bool _apiKeyWasJustSuccessfullyFetchedOrReset = false;
-        private bool _messageDialogAlreadyOpen;
-        private bool _qrAlreadyFetched;
-        //private QrCodeScanner _scanner;
 
         #region Properties (API key, email, password, background task status etc.)
 
@@ -247,7 +240,7 @@ namespace SensorbergShowcase.Pages
             {
                 _sdkManager.Deinitialize(false);
                 _sdkManager.InitializeAsync(ApiKey);
-                HookResolverEvents();
+                SetResolverSpecificEvents(true);
             }
 
             if (!AreActionsEnabled)
@@ -350,12 +343,9 @@ namespace SensorbergShowcase.Pages
             IsApiKeyValid = true;
         }
 
-        private async void OnScanApiQrCodeButtonClicked(object sender, RoutedEventArgs e)
+        private void OnScanApiQrCodeButtonClicked(object sender, RoutedEventArgs e)
         {
-            _qrAlreadyFetched = false;
-
-            //_scanner.Visibility = Visibility.Visible;
-            //await _scanner.StartScanningAsync();
+            Frame.Navigate(typeof(QrCodeScannerPage));
         }
 
         private void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
@@ -370,7 +360,7 @@ namespace SensorbergShowcase.Pages
                 }
                 else
                 {
-                    UnhookResolverEvents();
+                    SetResolverSpecificEvents(false);
                     _sdkManager.Deinitialize(false);
                 }
 
@@ -456,55 +446,6 @@ namespace SensorbergShowcase.Pages
                 Password = (sender as PasswordBox).Password;
                 SaveApplicationSettings(KeyApiKey);
             }
-        }
-
-        private async void OnQrCodeResolved(object sender, string e)
-        {
-            if (_messageDialogAlreadyOpen || _qrAlreadyFetched)
-            {
-                return;
-            }
-
-            MessageDialog dialog = new MessageDialog(string.Format("Do you want to set api key to: {0} ?", e), "Qr code resolved");
-
-            dialog.Commands.Add(new UICommand("Yes", async command =>
-            {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                 {
-                     //_scanner.Visibility = Visibility.Collapsed;
-                     //await _scanner.StopScanningAsync();
-                     ApiKey = e;
-                 });
-                _qrAlreadyFetched = true;
-            }));
-
-            dialog.Commands.Add(new UICommand("Scan again", command =>
-            {
-            }));
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-            _messageDialogAlreadyOpen = true;
-                await dialog.ShowAsync();
-            _messageDialogAlreadyOpen = false;
-            });
-
-        }
-
-        private void OnCodeScannerLoaded(object sender, RoutedEventArgs e)
-        {
-            //_scanner = sender as QrCodeScanner;
-        }
-
-        private void OnScannerNotAvailable(object sender, EventArgs e)
-        {
-            IsScannerAvailable = false;
-        }
-
-        private async void OnBackRequested(object sender, BackRequestedEventArgs e)
-        {
-            e.Handled = true;
-            //_scanner.Visibility = Visibility.Collapsed;
-            //await _scanner.StopScanningAsync();
         }
     }
 }

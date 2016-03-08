@@ -104,7 +104,6 @@
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertValueConverter.cs" />
-    <Compile Include="Converters\RangeToImageUriConverter.cs" />
     <Compile Include="Converters\SpecialConverters.cs" />
     <Compile Include="Model\BeaconDetailsItem.cs" />
     <Compile Include="Model\BeaconDetailsModel.cs" />
@@ -122,6 +121,9 @@
     </Compile>
     <Compile Include="Pages\MainPage.xaml.Settings.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\QrCodeScannerPage.xaml.cs">
+      <DependentUpon>QrCodeScannerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -161,6 +163,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Pages\QrCodeScannerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
@@ -168,6 +174,9 @@
     </SDKReference>
     <SDKReference Include="SensorbergSDK, Version=1.0">
       <Name>Sensorberg beacon API for Windows 10</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.UWP.2015, Version=3.11.1">
+      <Name>SQLite for Universal Windows Platform</Name>
     </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

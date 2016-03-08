@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -23,6 +24,23 @@ namespace SensorbergShowcase
     /// </summary>
     sealed partial class App : Application
     {
+        private static ResourceLoader _resourceLoader = null;
+        /// <summary>
+        /// Resource loader for app-wide localization needs.
+        /// </summary>
+        public static ResourceLoader ResourceLoader
+        {
+            get
+            {
+                if (_resourceLoader == null)
+                {
+                    _resourceLoader = new ResourceLoader();
+                }
+
+                return _resourceLoader;
+            }
+        }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().

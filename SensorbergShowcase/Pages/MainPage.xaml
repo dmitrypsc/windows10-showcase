@@ -16,6 +16,7 @@
         <converters:BoolToScannerStateTextConverter x:Key="ScannerStateTextConverter" />
         <converters:BoolToAdvertisingButtonTextConverter x:Key="AdvertisingButtonTextConverter" />
         <converters:BoolToBackgroundImageSourceConverter x:Key="BackgroundImageSourceConverter" />
+        <converters:BoolToColorStringConverter x:Key="BoolToColorStringConverter" />
         
         <!-- Scanner -->
         <DataTemplate x:Key="ScannerDataTemplate">
@@ -325,12 +326,6 @@
                         </Button>
                     </StackPanel>
                 </ScrollViewer>
-                <!--<controls:QrCodeScanner QrCodeResolved="OnQrCodeResolved"
-                                        ScannerNotAvailable="OnScannerNotAvailable"
-                                        x:Name="CodeScanner"
-                                        Loaded="OnCodeScannerLoaded"
-                                        Visibility="Collapsed"/>-->
-
             </Grid>
         </DataTemplate>        
     </Page.Resources>
@@ -347,16 +342,7 @@
                 Stretch="UniformToFill"
                 ImageSource="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BackgroundImageSourceConverter}}" />
         </Grid.Background>
-        
-        <AppBarButton
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Foreground="Red"
-            Background="#aa000000"
-            Opacity="1"
-            Icon="ReportHacked"
-            Visibility="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-        
+                
         <!-- Hub is used on big screens -->
         <Hub
             x:Name="hub"
@@ -429,6 +415,12 @@
 
     <Page.BottomAppBar>
         <CommandBar>
+            <AppBarButton
+                x:Name="checkStatusButton"
+                x:Uid="checkStatus"
+                Foreground="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToColorStringConverter}, ConverterParameter='Green,Red'}"
+                Icon="ReportHacked"
+                Click="OnCheckStatusButtonClicked" />
             <AppBarToggleButton
                 x:Name="toggleScanButton"
                 x:Uid="toggleScanner"
