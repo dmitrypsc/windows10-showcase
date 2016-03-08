@@ -65,9 +65,12 @@ namespace SensorbergShowcase.Pages
             // TODO
         }
 
-        private void OnBeaconLayoutValidityChanged(object sender, bool e)
+        private async void OnBeaconLayoutValidityChangedAsync(object sender, bool e)
         {
-            IsLayoutValid = e;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                IsLayoutValid = e;
+            });
         }
 
         /// <summary>
@@ -97,7 +100,7 @@ namespace SensorbergShowcase.Pages
                     messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("no/Text")));
 
 
-                    Debug.WriteLine("Message dialog is open");
+                    Debug.WriteLine("MainPage.OnBeaconActionResolvedAsync: Message dialog is open");
                     _messageDialogIsOpen = true;
 
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
@@ -112,7 +115,7 @@ namespace SensorbergShowcase.Pages
                         }
                     });
 
-                    Debug.WriteLine("Message dialog is closed");
+                    Debug.WriteLine("MainPage.OnBeaconActionResolvedAsync: Message dialog is closed");
                     _messageDialogIsOpen = false;
                     break;
 

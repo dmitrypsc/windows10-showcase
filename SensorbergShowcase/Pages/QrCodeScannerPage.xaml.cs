@@ -1,5 +1,5 @@
 ﻿/*
- * The class has been adapted from Windows 10 sample project:
+ * This class has been adapted from Windows 10 sample project:
  * https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/CameraGetPreviewFrame
  */
 

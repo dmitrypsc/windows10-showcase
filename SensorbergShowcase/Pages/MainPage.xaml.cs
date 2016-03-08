@@ -54,7 +54,6 @@ namespace SensorbergShowcase.Pages
             pivot.Background.Opacity = 0.6d;
             
             SizeChanged += OnMainPageSizeChanged;
-            //SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
             MainPageScanner(); // Scanner specific construction
         }
@@ -68,7 +67,7 @@ namespace SensorbergShowcase.Pages
             {
                 _sdkManager = SDKManager.Instance(ManufacturerId, BeaconCode);
                 _sdkManager.ScannerStatusChanged += OnScannerStatusChangedAsync;
-                _sdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChanged;
+                _sdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChangedAsync;
                 _sdkManager.BackgroundFiltersUpdated += OnBackgroundFiltersUpdatedAsync;
             }
 
@@ -120,10 +119,12 @@ namespace SensorbergShowcase.Pages
 
             Window.Current.VisibilityChanged -= OnVisibilityChanged;
 
-            _sdkManager.LayoutValidityChanged -= OnBeaconLayoutValidityChanged;
+            _sdkManager.ScannerStatusChanged -= OnScannerStatusChangedAsync;
+            _sdkManager.LayoutValidityChanged -= OnBeaconLayoutValidityChangedAsync;
             _sdkManager.BackgroundFiltersUpdated -= OnBackgroundFiltersUpdatedAsync;
 
             SetScannerSpecificEvents(false);
+            SetResolverSpecificEvents(false);
 
             if (_sdkManager.IsScannerStarted)
             {
