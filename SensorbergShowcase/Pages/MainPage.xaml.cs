@@ -50,8 +50,8 @@ namespace SensorbergShowcase.Pages
         /// Constructor
         /// </summary>
         public MainPage()
-		{
-			InitializeComponent();
+        {
+            InitializeComponent();
             ResourceLoader = new ResourceLoader();
 
             double displaySize = ResolveDisplaySizeInInches();

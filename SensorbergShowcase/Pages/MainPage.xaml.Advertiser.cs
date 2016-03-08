@@ -6,17 +6,17 @@ using Windows.UI.Xaml.Controls;
 
 namespace SensorbergShowcase.Pages
 {
-	/// <summary>
-	/// Provides the main page implementation related to publishing BLE
+    /// <summary>
+    /// Provides the main page implementation related to publishing BLE
     /// advertisements with the device.
-	/// </summary>
-	public sealed partial class MainPage : Page
-	{
+    /// </summary>
+    public sealed partial class MainPage : Page
+    {
         private static readonly string DefaultBeaconId1 = "73676723-7400-0000-ffff-0000ffff0001";
         private static readonly string DefaultBeaconId2 = "4";
         private static readonly string DefaultBeaconId3 = "2";
         private const char HexStringSeparator = '-';
-		private const int BeaconId1LengthWithoutDashes = 32;
+        private const int BeaconId1LengthWithoutDashes = 32;
 
         #region Properties
 
@@ -88,70 +88,70 @@ namespace SensorbergShowcase.Pages
         /// </summary>
         /// <returns>True, if the values are valid, false otherwise.</returns>
         private bool ValuesForAdvertisementAreValid()
-		{
-			bool valid = false;
+        {
+            bool valid = false;
 
-			if (!string.IsNullOrEmpty(BeaconId1))
-			{
-				string beaconId1WithoutDashes = string.Join("", BeaconId1.Split(HexStringSeparator));
-				bool isValidHex = System.Text.RegularExpressions.Regex.IsMatch(beaconId1WithoutDashes, @"\A\b[0-9a-fA-F]+\b\Z");
+            if (!string.IsNullOrEmpty(BeaconId1))
+            {
+                string beaconId1WithoutDashes = string.Join("", BeaconId1.Split(HexStringSeparator));
+                bool isValidHex = System.Text.RegularExpressions.Regex.IsMatch(beaconId1WithoutDashes, @"\A\b[0-9a-fA-F]+\b\Z");
 
                 if (isValidHex && beaconId1WithoutDashes.Length == BeaconId1LengthWithoutDashes)
-				{
-					try
-					{
-						int.Parse(BeaconId2);
-						int.Parse(BeaconId3);
-						valid = true;
-					}
-					catch (Exception)
-					{
-					}
-				}
-			}
-
-			return valid;
-		}
-
-		private async void OnToggleAdvertizingButtonClickedAsync(object sender, RoutedEventArgs e)
-		{
-			await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-			{
-				if (_advertiser.IsStarted)
-				{
-					_advertiser.Stop();
-				}
-				else
-				{
-					if (ValuesForAdvertisementAreValid())
+                {
+                    try
                     {
-						_advertiser.BeaconId1 = BeaconId1;
+                        int.Parse(BeaconId2);
+                        int.Parse(BeaconId3);
+                        valid = true;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
 
-						try
-						{
-							_advertiser.BeaconId2 = (UInt16)int.Parse(BeaconId2);
-							_advertiser.BeaconId3 = (UInt16)int.Parse(BeaconId3);
+            return valid;
+        }
 
-							_advertiser.Start();
+        private async void OnToggleAdvertizingButtonClickedAsync(object sender, RoutedEventArgs e)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                if (_advertiser.IsStarted)
+                {
+                    _advertiser.Stop();
+                }
+                else
+                {
+                    if (ValuesForAdvertisementAreValid())
+                    {
+                        _advertiser.BeaconId1 = BeaconId1;
 
-							SaveApplicationSettings();
-						}
-						catch (Exception ex)
-						{
+                        try
+                        {
+                            _advertiser.BeaconId2 = (UInt16)int.Parse(BeaconId2);
+                            _advertiser.BeaconId3 = (UInt16)int.Parse(BeaconId3);
+
+                            _advertiser.Start();
+
+                            SaveApplicationSettings();
+                        }
+                        catch (Exception ex)
+                        {
                             ShowInformationalMessageDialogAsync(ex.ToString(), "Failed to start advertiser");
                         }
-					}
+                    }
                     else
                     {
                         ShowInformationalMessageDialogAsync(
                             "At least one of the entered values is invalid. The length of the beacon ID 1 (without dashes, which are ignored) must be "
                             + BeaconId1LengthWithoutDashes + " characters.", "Check advertiser values");
                     }
-				}
+                }
 
                 IsAdvertisingStarted = _advertiser.IsStarted;
             });
-		}
+        }
 
         private void OnAdvertisingTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {

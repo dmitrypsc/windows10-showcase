@@ -10,12 +10,12 @@ using SensorbergShowcase.Controls;
 
 namespace SensorbergShowcase.Pages
 {
-	/// <summary>
-	/// Code for the settings part of the main page. Here we also control the
+    /// <summary>
+    /// Code for the settings part of the main page. Here we also control the
     /// background task registration.
-	/// </summary>
-	public sealed partial class MainPage : Page
-	{
+    /// </summary>
+    public sealed partial class MainPage : Page
+    {
         private const string KeyEnableActions = "enable_actions";
         private const string KeyApiKey = "api_key";
         private const string KeyEmail = "email";
@@ -28,9 +28,9 @@ namespace SensorbergShowcase.Pages
         private ApiKeyHelper _apiKeyHelper = new ApiKeyHelper();
         private bool _enableActionsSwitchToggledByUser = true;
         private bool _apiKeyWasJustSuccessfullyFetchedOrReset = false;
-	    private bool _messageDialogAlreadyOpen;
-	    private bool _qrAlreadyFetched;
-	    //private QrCodeScanner _scanner;
+        private bool _messageDialogAlreadyOpen;
+        private bool _qrAlreadyFetched;
+        //private QrCodeScanner _scanner;
 
         #region Properties (API key, email, password, background task status etc.)
 
@@ -302,11 +302,11 @@ namespace SensorbergShowcase.Pages
         }
 
         private async void OnFetchApiKeyButtonClickedAsync(object sender, RoutedEventArgs e)
-		{
+        {
             IsValidatingOrFetchingApiKey = true;
 
             if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password))
-			{
+            {
                 FetchApiKeyResult result = await _apiKeyHelper.FetchApiKeyAsync(Email, Password);
 
                 if (result == FetchApiKeyResult.Success)
@@ -338,10 +338,10 @@ namespace SensorbergShowcase.Pages
 
                     ShowInformationalMessageDialogAsync(message, "Could not fetch API key");
                 }
-			}
+            }
 
             IsValidatingOrFetchingApiKey = false;
-		}
+        }
 
         private void OnResetToDemoApiKeyButtonClicked(object sender, RoutedEventArgs e)
         {
@@ -350,13 +350,13 @@ namespace SensorbergShowcase.Pages
             IsApiKeyValid = true;
         }
 
-	    private async void OnScanApiQrCodeButtonClicked(object sender, RoutedEventArgs e)
-	    {
-	        _qrAlreadyFetched = false;
+        private async void OnScanApiQrCodeButtonClicked(object sender, RoutedEventArgs e)
+        {
+            _qrAlreadyFetched = false;
 
             //_scanner.Visibility = Visibility.Visible;
             //await _scanner.StartScanningAsync();
-	    }
+        }
 
         private void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
         {
@@ -387,7 +387,7 @@ namespace SensorbergShowcase.Pages
         }
 
         private async void OnEnableBackgroundTaskSwitchToggledAsync(object sender, RoutedEventArgs e)
-		{
+        {
             if (sender is ToggleSwitch && (sender as ToggleSwitch).IsOn)
             {
                 if (string.IsNullOrEmpty(_sdkManager.ApiKey))
@@ -397,8 +397,8 @@ namespace SensorbergShowcase.Pages
 
                 BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync();
 
-				if (!result.success)
-				{
+                if (!result.success)
+                {
                     string exceptionMessage = string.Empty;
 
                     if (result.exception != null)
@@ -408,18 +408,18 @@ namespace SensorbergShowcase.Pages
 
                     (sender as ToggleSwitch).IsOn = false;
                     ShowInformationalMessageDialogAsync(exceptionMessage, "Failed to register background task");
-				}
+                }
             }
-			else
-			{
+            else
+            {
                 _sdkManager.UnregisterBackgroundTask();
-			}
+            }
 
             IsBackgroundTaskRegistered = _sdkManager.IsBackgroundTaskRegistered;
-		}
+        }
 
-		private async void OnSettingsTextBoxTextChanged(object sender, TextChangedEventArgs e)
-		{
+        private async void OnSettingsTextBoxTextChanged(object sender, TextChangedEventArgs e)
+        {
             if (sender is TextBox)
             {
                 string textBoxName = (sender as TextBox).Name.ToLower();
@@ -491,20 +491,20 @@ namespace SensorbergShowcase.Pages
         }
 
         private void OnCodeScannerLoaded(object sender, RoutedEventArgs e)
-	    {
+        {
             //_scanner = sender as QrCodeScanner;
-	    }
+        }
 
-	    private void OnScannerNotAvailable(object sender, EventArgs e)
-	    {
-	        IsScannerAvailable = false;
-	    }
+        private void OnScannerNotAvailable(object sender, EventArgs e)
+        {
+            IsScannerAvailable = false;
+        }
 
-	    private async void OnBackRequested(object sender, BackRequestedEventArgs e)
-	    {
-	        e.Handled = true;
+        private async void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            e.Handled = true;
             //_scanner.Visibility = Visibility.Collapsed;
             //await _scanner.StopScanningAsync();
         }
-	}
+    }
 }

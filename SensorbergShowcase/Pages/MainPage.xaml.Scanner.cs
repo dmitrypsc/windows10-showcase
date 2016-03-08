@@ -177,18 +177,18 @@ namespace SensorbergShowcase.Pages
         }
 
         private async void OnBeaconEventAsync(object sender, BeaconEventArgs eventArgs)
-		{
-			await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-			{
-				Beacon beacon = eventArgs.Beacon;
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                Beacon beacon = eventArgs.Beacon;
 
-				if (eventArgs.EventType != BeaconEventType.None)
-				{
-					System.Diagnostics.Debug.WriteLine("MainPage.OnBeaconEventAsync: '"
+                if (eventArgs.EventType != BeaconEventType.None)
+                {
+                    System.Diagnostics.Debug.WriteLine("MainPage.OnBeaconEventAsync: '"
                         + eventArgs.EventType + "' event from " + beacon.ToString());
-				}
+                }
 
-				bool isExistingBeacon = false;
+                bool isExistingBeacon = false;
 
                 if (BeaconModel.Contains(beacon))
                 {
@@ -207,29 +207,29 @@ namespace SensorbergShowcase.Pages
 
 
                 if (!isExistingBeacon)
-				{
+                {
                     BeaconModel.AddOrReplace(beacon);
                     BeaconModel.SortBeaconsBasedOnDistance();
                 }
 
-				if (BeaconModel.Count() > 0)
-				{
+                if (BeaconModel.Count() > 0)
+                {
                     BeaconsInRange = true;
-				}
-				else
-				{
+                }
+                else
+                {
                     BeaconsInRange = false;
                 }
             });
-		}
+        }
 
-		private async void OnBeaconNotSeenForAWhileAsync(object sender, Beacon e)
-		{
-			await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-			{
+        private async void OnBeaconNotSeenForAWhileAsync(object sender, Beacon e)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
                 BeaconModel.SetBeaconRange(e, 0);
-			});
-		}
+            });
+        }
 
         private async void OnToggleScanButtonClickedAsync(object sender, RoutedEventArgs e)
         {

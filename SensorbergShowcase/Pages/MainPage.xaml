@@ -24,11 +24,11 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <ListBox
-				    x:Name="scannedBeaconsListBox"
-					Background="Transparent"
-					Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                    x:Name="scannedBeaconsListBox"
+                    Background="Transparent"
+                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                     BorderBrush="Transparent"
-					ItemsSource="{Binding Path=BeaconModel.BeaconDetailsCollection, ElementName=thisPage}">
+                    ItemsSource="{Binding Path=BeaconModel.BeaconDetailsCollection, ElementName=thisPage}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <controls:BeaconDetailsControl Width="{Binding Path=BeaconDetailsControlWidth, ElementName=thisPage}" />
@@ -46,11 +46,11 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock
-					    x:Name="scannerStateTextBlock"
-						HorizontalAlignment="Center"
-						VerticalAlignment="Center"
+                        x:Name="scannerStateTextBlock"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         Style="{ThemeResource BodyTextBlockStyle}"
-						Text="{Binding Path=IsScanning, ElementName=thisPage, Converter={StaticResource ScannerStateTextConverter}}" />
+                        Text="{Binding Path=IsScanning, ElementName=thisPage, Converter={StaticResource ScannerStateTextConverter}}" />
                     <ProgressBar
                         x:Name="scannerProgressBar"
                         Grid.Row="1"
@@ -86,12 +86,12 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock
-						        Margin="0,12,0,0"
-								Style="{ThemeResource BodyTextBlockStyle}"
-								FontWeight="ExtraLight"
-								Text="Major" />
+                                Margin="0,12,0,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                FontWeight="ExtraLight"
+                                Text="Major" />
                             <TextBox
-								x:Name="beaconId2TextBox"
+                                x:Name="beaconId2TextBox"
                                 Margin="0,6,6,0"
                                 InputScope="Number"
                                 Text="{Binding Path=BeaconId2, ElementName=thisPage, Mode=TwoWay}"
@@ -100,12 +100,12 @@
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <TextBlock
-								Margin="6,12,0,0"
-								Style="{ThemeResource BodyTextBlockStyle}"
-								FontWeight="ExtraLight"
-								Text="Minor" />
+                                Margin="6,12,0,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                FontWeight="ExtraLight"
+                                Text="Minor" />
                             <TextBox
-								x:Name="beaconId3TextBox"
+                                x:Name="beaconId3TextBox"
                                 Margin="6,6,0,0"
                                 InputScope="Number"
                                 Text="{Binding Path=BeaconId3, ElementName=thisPage, Mode=TwoWay}"
@@ -378,7 +378,7 @@
             <HubSection Width="400" ContentTemplate="{StaticResource ScannerDataTemplate}">
                 <HubSection.Header>
                     <TextBlock
-						Style="{StaticResource SubheaderTextBlockStyle}"
+                        Style="{StaticResource SubheaderTextBlockStyle}"
                         Text="{Binding Path=HeaderWithBeaconCount, ElementName=thisPage}" />
                 </HubSection.Header>
             </HubSection>
@@ -386,14 +386,14 @@
                 <HubSection.Header>
                     <TextBlock
                         x:Uid="advertise"
-						Style="{StaticResource SubheaderTextBlockStyle}" />
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
                 </HubSection.Header>
             </HubSection>
             <HubSection ContentTemplate="{StaticResource SettingsDataTemplate}">
                 <HubSection.Header>
                     <TextBlock
                         x:Uid="settings"
-						Style="{StaticResource SubheaderTextBlockStyle}" />
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
                 </HubSection.Header>
             </HubSection>
         </Hub>
@@ -406,7 +406,7 @@
             <PivotItem ContentTemplate="{StaticResource ScannerDataTemplate}">
                 <PivotItem.Header>
                     <TextBlock
-						Style="{StaticResource SubheaderTextBlockStyle}"
+                        Style="{StaticResource SubheaderTextBlockStyle}"
                         Text="{Binding Path=HeaderWithBeaconCount, ElementName=thisPage}" />
                 </PivotItem.Header>
             </PivotItem>
@@ -414,14 +414,14 @@
                 <PivotItem.Header>
                     <TextBlock
                         x:Uid="advertise"
-						Style="{StaticResource SubheaderTextBlockStyle}" />
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
                 </PivotItem.Header>
             </PivotItem>
             <PivotItem ContentTemplate="{StaticResource SettingsDataTemplate}">
                 <PivotItem.Header>
                     <TextBlock
                         x:Uid="settings"
-						Style="{StaticResource SubheaderTextBlockStyle}" />
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
                 </PivotItem.Header>
             </PivotItem>
         </Pivot>      

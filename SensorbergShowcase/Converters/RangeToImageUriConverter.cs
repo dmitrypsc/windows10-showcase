@@ -7,24 +7,24 @@ using Windows.UI.Xaml.Data;
 
 namespace SensorbergShowcase.Converters
 {
-	public class RangeToImageUriConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, string language)
-		{
-			string uri = null;
+    public class RangeToImageUriConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            string uri = null;
 
-			if (value is int)
-			{
-				int range = (int)value;
-				uri = "ms-appx:///Assets/Graphics/range" + range.ToString() + ".png";
-			}
+            if (value is int)
+            {
+                int range = (int)value;
+                uri = "ms-appx:///Assets/Graphics/range" + range.ToString() + ".png";
+            }
 
-			return uri;
-		}
+            return uri;
+        }
 
-		public object ConvertBack(object value, Type targetType, object parameter, string language)
-		{
-			throw new NotImplementedException();
-		}
-	}
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
