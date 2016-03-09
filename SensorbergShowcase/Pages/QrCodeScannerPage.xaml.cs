@@ -14,6 +14,7 @@
 //
 //*********************************************************
 
+using SensorbergShowcase.Utils;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media;
 using Windows.Media.Capture;
+using Windows.Media.Devices;
 using Windows.Media.MediaProperties;
 using Windows.System.Display;
 using Windows.UI.Core;
@@ -51,6 +53,7 @@ namespace SensorbergShowcase.Pages
         private readonly SystemMediaTransportControls _systemMediaControls = SystemMediaTransportControls.GetForCurrentView();
         private MediaCapture _mediaCapture;
         private BarcodeReader mBarcodeReader;
+        private ContinuousAutoFocus _continuousAutoFocus;
         private SimpleOrientation _deviceOrientation = SimpleOrientation.NotRotated;
         private DisplayOrientations _displayOrientation = DisplayOrientations.Portrait;
         private bool _isInitialized;
@@ -128,11 +131,27 @@ namespace SensorbergShowcase.Pages
         {
             SetupUi();
             await InitializeCameraAsync();
+
+            if (_isInitialized)
+            {
+                FocusControl focusControl = _mediaCapture.VideoDeviceController.FocusControl;
+
+                if (focusControl != null)
+                {
+                    _continuousAutoFocus = await ContinuousAutoFocus.StartAsync(focusControl);
+                }
+            }
+
             StartScanningForQrCodeAsync();
         }
 
         private async Task CleanupAsync()
         {
+            if (_continuousAutoFocus != null)
+            {
+                _continuousAutoFocus.Dispose();
+            }
+
             await CleanupCameraAsync();
             CleanupUi();
         }
@@ -558,8 +577,7 @@ namespace SensorbergShowcase.Pages
         {
             System.Diagnostics.Debug.WriteLine("QrCodeScannerPage.OnMediaCaptureFailedAsync: (0x{0:X}) {1}",
                 errorEventArgs.Code, errorEventArgs.Message);
-            await CleanupAsync();
-            Frame.GoBack();
+            Frame.GoBack(); // Cleanup will happen in OnNavigatedFrom
         }
 
         /// <summary>
