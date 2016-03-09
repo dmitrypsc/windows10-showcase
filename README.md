@@ -28,7 +28,7 @@ laptops, desktops).
 
 * Install the latest Visual Studio: https://www.visualstudio.com/
 * Install the SQLite VSIX package for Universal Windows Platform development using Visual Studio 2015 (`sqlite-uwp-<version number>.vsix`): http://www.sqlite.org/download.html
-* Install the Sensorberg SDK VSIX package: TBD
+* [Install the Sensorberg SDK VSIX package](https://github.com/sensorberg-dev/windows10-sdk/releases)
 
 ### Building and running the project ###
 
