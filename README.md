@@ -37,9 +37,9 @@ laptops, desktops).
 2. Make sure the SQLite and Sensorberg SDK references are added to the project
    (see the images below).
 
-![Adding references in Solution Explorer](/Documentation/Images/VisualStudioAddingReference.png)&nbsp;
-![Selecting extensions](/Documentation/Images/VisualStudioSelectExtensions.png)&nbsp;
-![References added](/Documentation/Images/VisualStudioRefencesAdded.png)
+   ![Adding references in Solution Explorer](/Documentation/Images/VisualStudioAddingReference.png)&nbsp;
+   ![Selecting extensions](/Documentation/Images/VisualStudioSelectExtensions.png)&nbsp;
+   ![References added](/Documentation/Images/VisualStudioRefencesAdded.png)
 
 3. Select the platform you are building the app for, e.g.:
  * ARM for Lumia phones
