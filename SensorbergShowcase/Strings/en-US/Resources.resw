@@ -121,7 +121,7 @@
     <value>advertise</value>
   </data>
   <data name="apiKey.Text" xml:space="preserve">
-    <value>API Key</value>
+    <value>API key</value>
   </data>
   <data name="apiKeyIsValid.Text" xml:space="preserve">
     <value>API key is valid</value>

@@ -420,7 +420,7 @@
                 x:Name="checkStatusButton"
                 x:Uid="checkStatus"
                 Foreground="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToColorStringConverter}, ConverterParameter='Green,Red'}"
-                Icon="ReportHacked"
+                Icon="Repair"
                 Click="OnCheckStatusButtonClickedAsync" />
             <AppBarToggleButton
                 x:Name="toggleScanButton"

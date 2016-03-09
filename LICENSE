@@ -19,3 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+File /SensorbergShowcase/Pages/QrCodeScannerPage.xaml.cs is adapted from
+Windows 10 sample project (https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/CameraGetPreviewFrame)
+and is licensed under the MIT License (MIT).
+
+---
+
+File /SensorbergShowcase/Utils/ContinousAutoFocus.cs is adapted from VideoEffect
+project by Matthieu Maitre (https://github.com/mmaitre314/VideoEffect) and is
+licensed under Apache License 2.0 (see https://github.com/mmaitre314/VideoEffect/blob/master/LICENSE).
