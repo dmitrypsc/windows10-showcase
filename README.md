@@ -34,7 +34,7 @@ laptops, desktops).
 
 1. Open the project solution file, `SensorbergShowcase.sln`, located in the root
    directory of this project.
-2. Make sure the SQLite and Sensorberg SDK references are added to the project
+2. Make sure the **SQLite** and **Sensorberg SDK** references are added to the project
    (see the images below).
 
    ![Adding references in Solution Explorer](/Documentation/Images/VisualStudioAddingReference.png)&nbsp;
@@ -42,6 +42,7 @@ laptops, desktops).
    ![References added](/Documentation/Images/VisualStudioRefencesAdded.png)
 
 3. Select the platform you are building the app for, e.g.:
- * ARM for Lumia phones
- * x86 or x64 for laptops and desktops
-4. Build the solution (*Build* -> *Build Solution* or Ctrl+Shift+B)
+ * **ARM** for Lumia phones
+ * **x86** or **x64** for laptops and desktops
+
+4. Build the solution (**Build** -> **Build Solution** or Ctrl+Shift+B)
