@@ -60,11 +60,6 @@ namespace SensorbergShowcase.Pages
             }
         }
 
-        private void OnCheckStatusButtonClicked(object sender, RoutedEventArgs e)
-        {
-            // TODO
-        }
-
         private async void OnBeaconLayoutValidityChangedAsync(object sender, bool e)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>

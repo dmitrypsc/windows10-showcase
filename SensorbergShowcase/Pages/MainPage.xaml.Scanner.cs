@@ -3,7 +3,6 @@ using SensorbergShowcase.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;

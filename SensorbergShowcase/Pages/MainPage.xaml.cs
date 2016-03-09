@@ -1,6 +1,6 @@
 ﻿using SensorbergSDK;
+using SensorbergShowcase.Utils;
 using System;
-using Windows.Graphics.Display;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,6 +20,8 @@ namespace SensorbergShowcase.Pages
          */
         private const UInt16 ManufacturerId = 0x004c;
         private const UInt16 BeaconCode = 0x0215;
+
+        private const int SettingsPivotIndex = 2;
 
         private SDKManager _sdkManager;
         private bool _appIsOnForeground;
@@ -46,7 +48,7 @@ namespace SensorbergShowcase.Pages
         {
             InitializeComponent();
 
-            double displaySize = ResolveDisplaySizeInInches();
+            double displaySize = DeviceUtils.ResolveDisplaySizeInInches();
             System.Diagnostics.Debug.WriteLine("Display size is " + displaySize + " inches");
             IsBigScreen = displaySize > 6d ? true : false;
 
@@ -92,12 +94,21 @@ namespace SensorbergShowcase.Pages
             if (QrCodeScannerPage.ScannedQrCode != null)
             {
                 System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
-                // TODO: Display Settings pivot item when running on phone
-                ApiKey = QrCodeScannerPage.ScannedQrCode;
-                SaveApplicationSettings(KeyApiKey);
-            }
+                
+                if (pivot.Visibility == Visibility.Visible)
+                {
+                    pivot.SelectedIndex = SettingsPivotIndex;
+                }
 
-            ValidateApiKeyAsync();
+                if (await ValidateApiKeyAsync(QrCodeScannerPage.ScannedQrCode, true) != ApiKeyValidationResult.Invalid)
+                {
+                    // The key is valid (or we couldn't validate due to network error)
+                    ApiKey = QrCodeScannerPage.ScannedQrCode;
+                    SaveApplicationSettings(KeyApiKey);
+                }
+            }
+            
+            ValidateApiKeyAsync(ApiKey); // Do not await
 
             if (_advertiser == null)
             {
@@ -137,6 +148,64 @@ namespace SensorbergShowcase.Pages
         }
 
         /// <summary>
+        /// Helper method for showing informational message dialogs, which do not require command handling.
+        /// </summary>
+        /// <param name="message">The message to show.</param>
+        /// <param name="title">The title of the message dialog.</param>
+        private async void ShowInformationalMessageDialogAsync(string message, string title = null)
+        {
+            MessageDialog messageDialog = (title == null) ? new MessageDialog(message) : new MessageDialog(message, title);
+            messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("ok/Text")));
+            await messageDialog.ShowAsync();
+        }
+
+        /// <summary>
+        /// Creates and displays a message dialog containing the current status of the SDK and Bluetooth.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnCheckStatusButtonClickedAsync(object sender, RoutedEventArgs e)
+        {
+            string statusAsContentString = App.ResourceLoader.GetString("bluetooth/Text") + ": ";
+
+            if (await DeviceUtils.GetIsBluetoothSupportedAsync())
+            {
+                if (await DeviceUtils.GetIsBluetoothEnabledAsync())
+                {
+                    statusAsContentString += App.ResourceLoader.GetString("enabled/Text");
+                }
+                else
+                {
+                    statusAsContentString += App.ResourceLoader.GetString("disabled/Text");
+                }
+            }
+            else
+            {
+                statusAsContentString += App.ResourceLoader.GetString("notSupported/Text");
+            }
+
+            statusAsContentString +=
+                "\n" + App.ResourceLoader.GetString("apiKey/Text") + ": "
+                + (IsApiKeyValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"))
+                + "\n" + App.ResourceLoader.GetString("beaconLayout/Text") + ": "
+                + (IsLayoutValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"));
+
+            MessageDialog messageDialog = new MessageDialog(
+                statusAsContentString,
+                App.ResourceLoader.GetString("status/Text"));
+
+            await messageDialog.ShowAsync();
+        }
+
+        private async void OnBackgroundFiltersUpdatedAsync(object sender, EventArgs e)
+        {
+            MessageDialog messageDialog = new MessageDialog(
+                App.ResourceLoader.GetString("backgroundTaskFiltersUpdated/Text"),
+                App.ResourceLoader.GetString("updateSuccessful/Text"));
+            await messageDialog.ShowAsync();
+        }
+
+        /// <summary>
         /// Called when the app is brought on foreground or put in background.
         /// </summary>
         /// <param name="sender"></param>
@@ -154,52 +223,6 @@ namespace SensorbergShowcase.Pages
             {
                 SetScannerSpecificEvents(false);
             }
-        }
-
-        /// <summary>
-        /// Helper method for showing informational message dialogs, which do not require command handling.
-        /// </summary>
-        /// <param name="message">The message to show.</param>
-        /// <param name="title">The title of the message dialog.</param>
-        private async void ShowInformationalMessageDialogAsync(string message, string title = null)
-        {
-            MessageDialog messageDialog = (title == null) ? new MessageDialog(message) : new MessageDialog(message, title);
-            messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("ok/Text")));
-            await messageDialog.ShowAsync();
-        }
-
-        /// <summary>
-        /// Resolves the display size of the device running this app.
-        /// </summary>
-        /// <returns>The display size in inches or less than zero if unable to resolve.</returns>
-        private double ResolveDisplaySizeInInches()
-        {
-            double displaySize = -1d;
-
-            DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
-            double rawPixelsPerViewPixel = displayInformation.RawPixelsPerViewPixel;
-            float rawDpiX = displayInformation.RawDpiX;
-            float rawDpiY = displayInformation.RawDpiY;
-            double screenResolutionX = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Bounds.Width * rawPixelsPerViewPixel;
-            double screenResolutionY = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Bounds.Height * rawPixelsPerViewPixel;
-
-            if (rawDpiX > 0 && rawDpiY > 0)
-            {
-                displaySize = Math.Sqrt(
-                    Math.Pow(screenResolutionX / rawDpiX, 2) +
-                    Math.Pow(screenResolutionY / rawDpiY, 2));
-                displaySize = Math.Round(displaySize, 1); // One decimal is enough
-            }
-
-            return displaySize;
-        }
-
-        private async void OnBackgroundFiltersUpdatedAsync(object sender, EventArgs e)
-        {
-            MessageDialog messageDialog = new MessageDialog(
-                App.ResourceLoader.GetString("backgroundTaskFiltersUpdated/Text"),
-                App.ResourceLoader.GetString("updateSuccessful/Text"));
-            await messageDialog.ShowAsync();
         }
 
         private void OnMainPageSizeChanged(object sender, SizeChangedEventArgs e)

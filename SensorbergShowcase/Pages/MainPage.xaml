@@ -132,7 +132,7 @@
         <!-- Settings -->
         <DataTemplate x:Key="SettingsDataTemplate">
             <Grid>
-                <ScrollViewer MaxWidth="350">
+                <ScrollViewer MaxWidth="400">
                     <StackPanel Margin="0,0,12,48">
                         <!-- Actions setting -->
                         <Grid>
@@ -148,9 +148,9 @@
                                 IsIndeterminate="True"
                                 Visibility="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <TextBlock
+                                x:Uid="beaconActions"
                                 HorizontalAlignment="Left"
-                                Style="{ThemeResource TitleTextBlockStyle}"
-                                Text="Beacon actions" />
+                                Style="{ThemeResource TitleTextBlockStyle}" />
                             <ToggleSwitch
                                 x:Name="enableActionsSwitch"
                                 Grid.Column="1"
@@ -162,21 +162,21 @@
                         <Grid Margin="0,-6,0,0"
                               Visibility="{Binding Path=AreActionsEnabled, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
                             <TextBlock
+                                x:Uid="sdkStatusOk"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Opacity="0.8"
                                 Foreground="Green"
                                 FontWeight="ExtraLight"
                                 FontStyle="Italic"
                                 TextWrapping="Wrap"
-                                Text="SDK status OK."
                                 Visibility="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <TextBlock
+                                x:Uid="invalidOrMissingLayoutError"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Foreground="Red"
                                 FontWeight="ExtraLight"
                                 FontStyle="Italic"
                                 TextWrapping="Wrap"
-                                Text="SDK will not be able to resolve beacon actions due to invalid or missing beacon layout. If the API key is valid, check network connectivity."
                                 Visibility="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
                         </Grid>
 
@@ -187,9 +187,9 @@
                                 <ColumnDefinition Width=".3*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="backgroundTask"
                                 HorizontalAlignment="Left"
-                                Style="{ThemeResource TitleTextBlockStyle}"
-                                Text="Background task" />
+                                Style="{ThemeResource TitleTextBlockStyle}" />
                             <ToggleSwitch
                                 x:Name="enableBackgroundTaskSwitch"
                                 Grid.Column="1"
@@ -201,9 +201,9 @@
 
                         <!-- API key settings -->
                         <TextBlock
+                            x:Uid="apiKey"
                             Margin="0,12,0,0"
-                            Style="{ThemeResource TitleTextBlockStyle}"
-                            Text="API Key" />
+                            Style="{ThemeResource TitleTextBlockStyle}" />
                         <TextBlock
                             x:Name="appNameTextBlock"
                             Margin="0,6,0,0"
@@ -211,10 +211,10 @@
                             Text="app name"
                             Visibility="Collapsed" />
                         <TextBlock
+                            x:Uid="enterApiKey"
                             Margin="0,6,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            FontWeight="ExtraLight"
-                            Text="Enter API key" />
+                            FontWeight="ExtraLight" />
                         <TextBox
                             x:Name="apiKeyTextBox"
                             Margin="0,6,0,0"
@@ -227,21 +227,21 @@
                                 <ColumnDefinition Width=".5*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
+                                x:Uid="apiKeyNotValidated"
                                 HorizontalAlignment="Left"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Foreground="Red"
                                 FontWeight="ExtraLight"
                                 FontStyle="Italic"
-                                Text="API key not validated"
                                 Visibility="{Binding Path=IsApiKeyValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
                             <TextBlock
+                                x:Uid="apiKeyIsValid"
                                 HorizontalAlignment="Left"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Foreground="Green"
                                 FontWeight="ExtraLight"
                                 FontStyle="Italic"
                                 Opacity="0.8"
-                                Text="API key is valid"
                                 Visibility="{Binding Path=IsApiKeyValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <Button
                                 Grid.Column="1"
@@ -253,37 +253,39 @@
                                 Click="OnValidateApiKeyButtonClicked">
                                 <Button.Content>
                                     <TextBlock
-                                        Style="{ThemeResource BodyTextBlockStyle}"
-                                        Text="Validate API key" />
+                                        x:Uid="validateApiKey"
+                                        Style="{ThemeResource BodyTextBlockStyle}" />
                                 </Button.Content>
                             </Button>
                         </Grid>
                         <StackPanel Visibility="{Binding IsScannerAvailable, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
                             <TextBlock
+                                x:Uid="or"
                                 Margin="0,12,0,0"
                                 Style="{ThemeResource BodyTextBlockStyle}"
-                                HorizontalAlignment="Center"
-                                Text="- OR -" />
+                                HorizontalAlignment="Center" />
                             <Button x:Name="scanApiKeyButton"
                                     Margin="0,6,0,0"
                                     HorizontalAlignment="Center"
                                     IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
                                     Click="OnScanApiQrCodeButtonClicked">
                                 <Button.Content>
-                                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}"
-                                               Text="scan API QR code" />
+                                    <TextBlock
+                                        x:Uid="scanApiKeyFromQrCode"
+                                        Style="{ThemeResource SubtitleTextBlockStyle}" />
                                 </Button.Content>
                             </Button>
                         </StackPanel>
-                        <TextBlock Margin="0,12,0,0"
-                                   Style="{ThemeResource BodyTextBlockStyle}"
-                                   HorizontalAlignment="Center"
-                                   Text="- OR -" />
                         <TextBlock
+                            x:Uid="or"
+                            Margin="0,12,0,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            HorizontalAlignment="Center" />
+                        <TextBlock
+                            x:Uid="email"
                             Margin="0,6,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            FontWeight="ExtraLight"
-                            Text="Email" />
+                            FontWeight="ExtraLight" />
                         <TextBox
                             x:Name="emailTextBox"
                             Margin="0,6,0,0"
@@ -291,10 +293,10 @@
                             IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
                             TextChanged="OnSettingsTextBoxTextChanged" />
                         <TextBlock
+                            x:Uid="password"
                             Margin="0,12,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            FontWeight="ExtraLight"
-                            Text="Password" />
+                            FontWeight="ExtraLight" />
                         <PasswordBox
                             x:Name="passwordBox"
                             Margin="0,6,0,0"
@@ -308,8 +310,8 @@
                             Click="OnFetchApiKeyButtonClickedAsync">
                             <Button.Content>
                                 <TextBlock
-                                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                                    Text="fetch API key" />
+                                    x:Uid="fetchApiKey"
+                                    Style="{ThemeResource SubtitleTextBlockStyle}" />
                             </Button.Content>
                         </Button>
                         <Button
@@ -320,8 +322,8 @@
                             Click="OnResetToDemoApiKeyButtonClicked">
                             <Button.Content>
                                 <TextBlock
-                                    Style="{ThemeResource BodyTextBlockStyle}"
-                                    Text="Reset to demo API key" />
+                                    x:Uid="resetToDemoApiKey"
+                                    Style="{ThemeResource BodyTextBlockStyle}" />
                             </Button.Content>
                         </Button>
                     </StackPanel>
@@ -329,7 +331,7 @@
             </Grid>
         </DataTemplate>        
     </Page.Resources>
-    
+
     <Grid x:Name="layoutGrid">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -342,23 +344,22 @@
                 Stretch="UniformToFill"
                 ImageSource="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BackgroundImageSourceConverter}}" />
         </Grid.Background>
-                
+
         <!-- Hub is used on big screens -->
         <Hub
             x:Name="hub"
-            MinWidth="1140"
+            MinWidth="1200"
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
             Visibility="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
             <Hub.Header>
                 <Grid Visibility="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock
                         x:Name="pageTitle"
-                        x:Uid="Header"
+                        x:Uid="sensorbergShowcase"
                         VerticalAlignment="Top"
                         Style="{StaticResource HeaderTextBlockStyle}"
                         IsHitTestVisible="false"
-                        TextWrapping="NoWrap"
-                        Text="sensorberg showcase" />
+                        TextWrapping="NoWrap" />
                 </Grid>
             </Hub.Header>
             <HubSection Width="400" ContentTemplate="{StaticResource ScannerDataTemplate}">
@@ -383,7 +384,7 @@
                 </HubSection.Header>
             </HubSection>
         </Hub>
-        
+
         <!-- Pivot is used on smaller screen (phones) -->
         <Pivot
             x:Name="pivot"
@@ -410,7 +411,7 @@
                         Style="{StaticResource SubheaderTextBlockStyle}" />
                 </PivotItem.Header>
             </PivotItem>
-        </Pivot>      
+        </Pivot>
     </Grid>
 
     <Page.BottomAppBar>
@@ -420,7 +421,7 @@
                 x:Uid="checkStatus"
                 Foreground="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToColorStringConverter}, ConverterParameter='Green,Red'}"
                 Icon="ReportHacked"
-                Click="OnCheckStatusButtonClicked" />
+                Click="OnCheckStatusButtonClickedAsync" />
             <AppBarToggleButton
                 x:Name="toggleScanButton"
                 x:Uid="toggleScanner"

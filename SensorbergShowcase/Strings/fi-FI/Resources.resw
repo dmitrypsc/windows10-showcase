@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="advertise.Text" xml:space="preserve">
-    <value>advertise</value>
+    <value>lähetys</value>
   </data>
   <data name="apiKey.Text" xml:space="preserve">
-    <value>API Key</value>
+    <value>API-avain</value>
   </data>
   <data name="apiKeyIsValid.Text" xml:space="preserve">
-    <value>API key is valid</value>
+    <value>API-avain on kelvollinen</value>
   </data>
   <data name="apiKeyNotValidated.Text" xml:space="preserve">
-    <value>API key not validated</value>
+    <value>API-avain ei ole kelvollinen</value>
   </data>
   <data name="apiKeyValidationFailedDueToNetworkError.Text" xml:space="preserve">
-    <value>Failed to validate the API key due to a possible network error.</value>
+    <value>API-avaimen tarkistus epäonnistui yhteysvirheen vuoksi.</value>
   </data>
   <data name="authenticationFailedForFetchingApiKey.Text" xml:space="preserve">
-    <value>Authentication failed. Please check your email address and password.</value>
+    <value>Todennus epäonnistui. Ole hyvä ja tarkasta sähköpostiosoite ja salasana.</value>
   </data>
   <data name="backgroundTask.Text" xml:space="preserve">
-    <value>Background task</value>
+    <value>Tausta-ajo</value>
   </data>
   <data name="backgroundTaskFiltersUpdated.Text" xml:space="preserve">
-    <value>Background task filters updated successfully with the new beacon identifiers</value>
+    <value>Tausta-ajon beacon-tunnisteet päivitetty onnistuneesti</value>
   </data>
   <data name="beaconActions.Text" xml:space="preserve">
-    <value>Beacon actions</value>
+    <value>Beacon-toimenpiteet</value>
   </data>
   <data name="beaconLayout.Text" xml:space="preserve">
     <value>beacon layout</value>
@@ -151,135 +151,135 @@
     <value>Bluetooth</value>
   </data>
   <data name="checkStatus.Label" xml:space="preserve">
-    <value>check status</value>
+    <value>tarkista tila</value>
   </data>
   <data name="couldNotFetchApiKey.Text" xml:space="preserve">
-    <value>Could not fetch API key</value>
+    <value>API-avainta ei voitu hakea</value>
   </data>
   <data name="disabled.Text" xml:space="preserve">
-    <value>disabled</value>
+    <value>ei käytössä</value>
   </data>
   <data name="email.Text" xml:space="preserve">
-    <value>Email</value>
+    <value>Sähköposti</value>
   </data>
   <data name="enableBluetoothPrompt.Text" xml:space="preserve">
-    <value>Do you wish to enable Bluetooth on this device?</value>
+    <value>Haluatko aktivoida Bluetooth-toiminnallisuuden tällä laitteella?</value>
   </data>
   <data name="enabled.Text" xml:space="preserve">
-    <value>enabled</value>
+    <value>käytössä</value>
   </data>
   <data name="enterApiKey.Text" xml:space="preserve">
-    <value>Enter API key</value>
+    <value>Syötä API-avain</value>
   </data>
   <data name="failedToFetchApiKeyDueToNetworkError.Text" xml:space="preserve">
-    <value>Failed to fetch the API key due to a possible network error.</value>
+    <value>API-avaimen haku epäonnistui yhteysvirheen vuoksi.</value>
   </data>
   <data name="failedToParseServerResponse.Text" xml:space="preserve">
-    <value>Failed to parse the server response.</value>
+    <value>Palvelinvastauksen jäsennys epäonnistui.</value>
   </data>
   <data name="failedToRegisterBackgroundTask.Text" xml:space="preserve">
-    <value>Failed to register background task</value>
+    <value>Tausta-ajon rekisteröinti epäonnistui</value>
   </data>
   <data name="failedToStartWatcher.Text" xml:space="preserve">
-    <value>Failed to start Bluetooth LE advertisement watcher</value>
+    <value>Bluetooth LE advertisement watcher -komponentin käynnistys epäonnistui</value>
   </data>
   <data name="fetchApiKey.Text" xml:space="preserve">
-    <value>fetch API key</value>
+    <value>hae API-avain</value>
   </data>
   <data name="invalid.Text" xml:space="preserve">
-    <value>invalid</value>
+    <value>epäkelpo</value>
   </data>
   <data name="invalidApiKey.Text" xml:space="preserve">
-    <value>The API key is invalid.</value>
+    <value>API-avain ei ole kelvollinen</value>
   </data>
   <data name="invalidOrMissingLayoutError.Text" xml:space="preserve">
-    <value>SDK will not be able to resolve beacon actions due to invalid or missing beacon layout. If the API key is valid, check network connectivity.</value>
+    <value>SDK ei voi selvittää beacon-toimenpiteitä puuttuvan tai epäkelvon beacon layout -tiedon vuoksi. Jos API-avain on kelvollinen, tarkasta verkkoyhteys.</value>
   </data>
   <data name="no.Text" xml:space="preserve">
-    <value>no</value>
+    <value>ei</value>
   </data>
   <data name="notSupported.Text" xml:space="preserve">
-    <value>not supported</value>
+    <value>ei tuettu</value>
   </data>
   <data name="noWindowsCampaignsAvailable.Text" xml:space="preserve">
-    <value>No Windows campaigns available.</value>
+    <value>Ei Windows-kampanjoita saatavilla.</value>
   </data>
   <data name="ok.Text" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="or.Text" xml:space="preserve">
-    <value>- OR -</value>
+    <value>- TAI -</value>
   </data>
   <data name="password.Text" xml:space="preserve">
-    <value>Password</value>
+    <value>Salasana</value>
   </data>
   <data name="resetToDemoApiKey.Text" xml:space="preserve">
-    <value>Reset to demo API key</value>
+    <value>Palauta demo-API-avain</value>
   </data>
   <data name="scanApiKeyFromQrCode.Text" xml:space="preserve">
-    <value>scan API key from QR code</value>
+    <value>lue API-avain QR-koodista</value>
   </data>
   <data name="scanner.Text" xml:space="preserve">
-    <value>scanner</value>
+    <value>skanneri</value>
   </data>
   <data name="scannerStopped.Text" xml:space="preserve">
-    <value>Scanner is stopped</value>
+    <value>Skanneri on pysäytetty</value>
   </data>
   <data name="scannerWithBeaconCount.Text" xml:space="preserve">
-    <value>scanner ({0})</value>
+    <value>skanneri ({0})</value>
   </data>
   <data name="scanning.Text" xml:space="preserve">
-    <value>Scanning...</value>
+    <value>Skannataan...</value>
   </data>
   <data name="scanningForQrCode.Text" xml:space="preserve">
-    <value>scanning for QR code...</value>
+    <value>etsitään QR-koodia...</value>
   </data>
   <data name="sdkStatusOk.Text" xml:space="preserve">
-    <value>SDK status OK</value>
+    <value>SDK:n tila OK</value>
   </data>
   <data name="sensorbergShowcase.Text" xml:space="preserve">
     <value>sensorberg showcase</value>
   </data>
   <data name="settings.Text" xml:space="preserve">
-    <value>settings</value>
+    <value>asetukset</value>
   </data>
   <data name="startAdvertising.Label" xml:space="preserve">
-    <value>start advertising</value>
+    <value>aloita lähetys</value>
   </data>
   <data name="startScanner.Label" xml:space="preserve">
-    <value>start scanner</value>
+    <value>aloita skannaus</value>
   </data>
   <data name="status.Text" xml:space="preserve">
-    <value>status</value>
+    <value>tila</value>
   </data>
   <data name="stopAdvertising.Label" xml:space="preserve">
-    <value>stop advertising</value>
+    <value>pysäytä lähetys</value>
   </data>
   <data name="stopScanner.Label" xml:space="preserve">
-    <value>stop scanner</value>
+    <value>pysäytä skannaus</value>
   </data>
   <data name="supported.Text" xml:space="preserve">
-    <value>supported</value>
+    <value>tuettu</value>
   </data>
   <data name="toggleScanner.Label" xml:space="preserve">
-    <value>toggle scanner</value>
+    <value>vaihda skannerin tila</value>
   </data>
   <data name="unknownApiKeyValidationError.Text" xml:space="preserve">
-    <value>Could not validate the API key due to unknown error.</value>
+    <value>API-avaimen kelvollisuutta ei voitu tarkistaa verkkoyhteyden vuoksi.</value>
   </data>
   <data name="unknownFetchApiKeyError.Text" xml:space="preserve">
-    <value>Could not fetch the API key due to unknown error.</value>
+    <value>API-avaimen tarkistuksessa tapahtui tuntematon virhe.</value>
   </data>
   <data name="updateSuccessful.Text" xml:space="preserve">
-    <value>Update successful</value>
+    <value>Päivitys onnistui</value>
   </data>
   <data name="valid.Text" xml:space="preserve">
-    <value>valid</value>
+    <value>kelvollinen</value>
   </data>
   <data name="validateApiKey.Text" xml:space="preserve">
-    <value>Validate API key</value>
+    <value>Tarkista API-avaimen kelvollisuus</value>
   </data>
   <data name="yes.Text" xml:space="preserve">
-    <value>yes</value>
+    <value>kyllä</value>
   </data>
 </root>

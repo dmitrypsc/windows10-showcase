@@ -3,6 +3,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using System;
+using System.Threading.Tasks;
 
 namespace SensorbergShowcase.Pages
 {
@@ -251,10 +252,13 @@ namespace SensorbergShowcase.Pages
         }
 
         /// <summary>
-        /// Validates the API key.
+        /// Validates the given API key.
         /// </summary>
+        /// <param name="apiKey">The API key to validate.</param>
         /// <param name="displayResultDialogInCaseOfFailure">If true, will display a result dialog in case of an error.</param>
-        private async void ValidateApiKeyAsync(bool displayResultDialogInCaseOfFailure = false)
+        /// <returns>The API key validation result.</returns>
+        private async Task<ApiKeyValidationResult> ValidateApiKeyAsync(
+            string apiKey, bool displayResultDialogInCaseOfFailure = false)
         {
             IsValidatingOrFetchingApiKey = true;
 
@@ -270,28 +274,29 @@ namespace SensorbergShowcase.Pages
 
                 if (displayResultDialogInCaseOfFailure)
                 {
-                    string message = "Could not validate the API key due to unknown error.";
+                    string message = App.ResourceLoader.GetString("unknownApiKeyValidationError/Text");
 
                     switch (result)
                     {
                         case ApiKeyValidationResult.Invalid:
-                            message = "The API key is invalid.";
+                            message = App.ResourceLoader.GetString("invalidApiKey/Text");
                             break;
                         case ApiKeyValidationResult.NetworkError:
-                            message = "Failed to validate the API key due to a possible network error.";
+                            message = App.ResourceLoader.GetString("apiKeyValidationFailedDueToNetworkError/Text");
                             break;
                     }
 
-                    ShowInformationalMessageDialogAsync(message, "API key not validated");
+                    ShowInformationalMessageDialogAsync(message, App.ResourceLoader.GetString("apiKeyNotValidated/Text"));
                 }
             }
 
             IsValidatingOrFetchingApiKey = false;
+            return result;
         }
 
         private void OnValidateApiKeyButtonClicked(object sender, RoutedEventArgs e)
         {
-            ValidateApiKeyAsync(true);
+            ValidateApiKeyAsync(ApiKey, true);
         }
 
         private async void OnFetchApiKeyButtonClickedAsync(object sender, RoutedEventArgs e)
@@ -311,25 +316,25 @@ namespace SensorbergShowcase.Pages
                 }
                 else
                 {
-                    string message = "Could not fetch the API key due to unknown error.";
+                    string message = App.ResourceLoader.GetString("unknownFetchApiKeyError/Text");
 
                     switch (result)
                     {
                         case FetchApiKeyResult.NetworkError:
-                            message = "Failed to fetch the API key due to a possible network error.";
+                            message = App.ResourceLoader.GetString("failedToFetchApiKeyDueToNetworkError/Text");
                             break;
                         case FetchApiKeyResult.AuthenticationFailed:
-                            message = "Authentication failed. Please check your email address and password.";
+                            message = App.ResourceLoader.GetString("authenticationFailedForFetchingApiKey/Text");
                             break;
                         case FetchApiKeyResult.ParsingError:
-                            message = "Failed to parse the server response.";
+                            message = App.ResourceLoader.GetString("failedToParseServerResponse/Text");
                             break;
                         case FetchApiKeyResult.NoWindowsCampains:
-                            message = "No Windows campaigns available.";
+                            message = App.ResourceLoader.GetString("noWindowsCampaignsAvailable/Text");
                             break;
                     }
 
-                    ShowInformationalMessageDialogAsync(message, "Could not fetch API key");
+                    ShowInformationalMessageDialogAsync(message, App.ResourceLoader.GetString("couldNotFetchApiKey/Text"));
                 }
             }
 
@@ -397,7 +402,9 @@ namespace SensorbergShowcase.Pages
                     }
 
                     (sender as ToggleSwitch).IsOn = false;
-                    ShowInformationalMessageDialogAsync(exceptionMessage, "Failed to register background task");
+
+                    ShowInformationalMessageDialogAsync(
+                        exceptionMessage, App.ResourceLoader.GetString("failedToRegisterBackgroundTask/Text"));
                 }
             }
             else
