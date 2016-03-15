@@ -305,9 +305,9 @@ namespace SensorbergShowcase.Pages
 
             if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password))
             {
-                FetchApiKeyResult result = await _apiKeyHelper.FetchApiKeyAsync(Email, Password);
+                NetworkResult result = await _apiKeyHelper.FetchApiKeyAsync(Email, Password);
 
-                if (result == FetchApiKeyResult.Success)
+                if (result == NetworkResult.Success)
                 {
                     _apiKeyWasJustSuccessfullyFetchedOrReset = true;
                     ApiKey = _apiKeyHelper.ApiKey;
@@ -320,16 +320,16 @@ namespace SensorbergShowcase.Pages
 
                     switch (result)
                     {
-                        case FetchApiKeyResult.NetworkError:
+                        case NetworkResult.NetworkError:
                             message = App.ResourceLoader.GetString("failedToFetchApiKeyDueToNetworkError/Text");
                             break;
-                        case FetchApiKeyResult.AuthenticationFailed:
+                        case NetworkResult.AuthenticationFailed:
                             message = App.ResourceLoader.GetString("authenticationFailedForFetchingApiKey/Text");
                             break;
-                        case FetchApiKeyResult.ParsingError:
+                        case NetworkResult.ParsingError:
                             message = App.ResourceLoader.GetString("failedToParseServerResponse/Text");
                             break;
-                        case FetchApiKeyResult.NoWindowsCampains:
+                        case NetworkResult.NoWindowsCampains:
                             message = App.ResourceLoader.GetString("noWindowsCampaignsAvailable/Text");
                             break;
                     }
