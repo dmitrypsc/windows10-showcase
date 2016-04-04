@@ -77,7 +77,6 @@ namespace SensorbergShowcase.Pages
 
             if (pendingBeaconAction != null)
             {
-                _sdkManager.ClearPendingActions();
 
                 if (await pendingBeaconAction.LaunchWebBrowserAsync())
                 {

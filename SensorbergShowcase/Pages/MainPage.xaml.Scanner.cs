@@ -8,6 +8,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using SensorbergSDK.Internal.Services;
+using SensorbergSDK.Services;
 
 namespace SensorbergShowcase.Pages
 {
