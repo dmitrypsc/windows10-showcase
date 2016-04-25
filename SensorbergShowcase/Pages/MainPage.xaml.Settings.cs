@@ -235,12 +235,12 @@ namespace SensorbergShowcase.Pages
             }
         }
 
-        private void TryToReinitializeSDK()
+        private async Task TryToReinitializeSDK()
         {
             if (_sdkManager != null)
             {
                 _sdkManager.Deinitialize(false);
-                _sdkManager.InitializeAsync(ApiKey);
+                await _sdkManager.InitializeAsync(ApiKey);
                 SetResolverSpecificEvents(true);
             }
 
@@ -353,7 +353,7 @@ namespace SensorbergShowcase.Pages
             Frame.Navigate(typeof(QrCodeScannerPage));
         }
 
-        private void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
+        private async void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
         {
             if (sender is ToggleSwitch)
             {
@@ -361,7 +361,7 @@ namespace SensorbergShowcase.Pages
 
                 if (enableActionsSwitch.IsOn)
                 {
-                    TryToReinitializeSDK();
+                    await TryToReinitializeSDK();
                 }
                 else
                 {
@@ -390,7 +390,7 @@ namespace SensorbergShowcase.Pages
                     _sdkManager.ApiKey = SDKManager.DemoApiKey;
                 }
 
-                BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync();
+                BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync("SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask", "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask");
 
                 if (!result.success)
                 {
