@@ -392,13 +392,13 @@ namespace SensorbergShowcase.Pages
 
                 BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync("SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask", "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask");
 
-                if (!result.success)
+                if (!result.Success)
                 {
                     string exceptionMessage = string.Empty;
 
-                    if (result.exception != null)
+                    if (result.Exception != null)
                     {
-                        exceptionMessage = ": " + result.exception.Message;
+                        exceptionMessage = ": " + result.Exception.Message;
                     }
 
                     (sender as ToggleSwitch).IsOn = false;
