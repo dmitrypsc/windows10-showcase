@@ -67,26 +67,10 @@ namespace SensorbergShowcase.Pages
 
             if (_sdkManager == null)
             {
-                _sdkManager = SDKManager.Instance(ManufacturerId, BeaconCode);
+                _sdkManager = SDKManager.Instance();
                 _sdkManager.ScannerStatusChanged += OnScannerStatusChangedAsync;
                 _sdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChangedAsync;
                 _sdkManager.BackgroundFiltersUpdated += OnBackgroundFiltersUpdatedAsync;
-            }
-
-            BeaconAction pendingBeaconAction = BeaconAction.FromNavigationEventArgs(e);
-
-            if (pendingBeaconAction != null)
-            {
-                _sdkManager.ClearPendingActions();
-
-                if (await pendingBeaconAction.LaunchWebBrowserAsync())
-                {
-                    Application.Current.Exit();
-                }
-                else
-                {
-                    OnBeaconActionResolvedAsync(this, pendingBeaconAction);
-                }
             }
 
             LoadApplicationSettings();
