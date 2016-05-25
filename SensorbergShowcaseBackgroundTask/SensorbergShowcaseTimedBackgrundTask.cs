@@ -5,7 +5,7 @@
 // All rights reserved.
 
 using Windows.ApplicationModel.Background;
-using SensorbergSDKBackground;
+using SensorbergSDK.Background;
 
 namespace SensorbergShowcaseBackgroundTask
 {

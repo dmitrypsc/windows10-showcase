@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Created by Kay Czarnotta on 11.04.2016
+// 
+// Copyright (c) 2016,  Sensorberg
+// 
+// All rights reserved.
+
 using Windows.ApplicationModel.Background;
-using SensorbergSDKBackground;
+using SensorbergSDK.Background;
 
 namespace SensorbergShowcaseBackgroundTask
 {

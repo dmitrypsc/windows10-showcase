@@ -3,6 +3,7 @@ using System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using SensorbergSDK.Internal.Utils;
 
 namespace SensorbergShowcase.Pages
 {

@@ -1,7 +1,8 @@
 ﻿{
   "dependencies": {
-    "HockeySDK.UWP": "3.1.0-build28341",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "HockeySDK.UWP": "4.0.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
+    "SensorbergSDK": "1.0.73",
     "ZXing.Net": "0.14.0.1"
   },
   "frameworks": {

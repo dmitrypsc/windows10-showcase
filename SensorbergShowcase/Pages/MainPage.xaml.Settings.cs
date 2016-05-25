@@ -240,7 +240,15 @@ namespace SensorbergShowcase.Pages
             if (_sdkManager != null)
             {
                 _sdkManager.Deinitialize(false);
-                await _sdkManager.InitializeAsync(ApiKey);
+                await
+                    _sdkManager.InitializeAsync(new SdkConfiguration()
+                    {
+                        ManufacturerId = ManufacturerId,
+                        BeaconCode = BeaconCode,
+                        ApiKey = ApiKey,
+                        BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
+                        BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
+                    });
                 SetResolverSpecificEvents(true);
             }
 
@@ -385,12 +393,12 @@ namespace SensorbergShowcase.Pages
         {
             if (sender is ToggleSwitch && (sender as ToggleSwitch).IsOn)
             {
-                if (string.IsNullOrEmpty(_sdkManager.ApiKey))
+                if (string.IsNullOrEmpty(_sdkManager.Configuration.ApiKey))
                 {
-                    _sdkManager.ApiKey = SDKManager.DemoApiKey;
+                    _sdkManager.Configuration.ApiKey = SDKManager.DemoApiKey;
                 }
 
-                BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync("SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask", "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask");
+                BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync();
 
                 if (!result.Success)
                 {
