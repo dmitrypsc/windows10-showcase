@@ -24,12 +24,12 @@ try {
 	bat "\"${msbuild}\" /t:Clean,Build /p:Platform=x86 SensorbergShowcase.sln"
 
 	def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result
-		emailext body: currentBuild, subject: sub , to: '$DEFAULT_RECIPIENTS'
+		emailext body: currentBuild.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
 }
 catch(e) {
     node {
 		def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result
-		emailext body: currentBuild, subject: sub , to: '$DEFAULT_RECIPIENTS'
+		emailext body: currentBuild.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
     }
     throw e
 }
