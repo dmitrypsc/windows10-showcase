@@ -7,6 +7,9 @@ using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using SensorbergSDK.Internal;
+using SensorbergSDK.Internal.Services;
+using SensorbergSDK.Services;
 
 namespace SensorbergShowcase.Pages
 {
@@ -117,7 +120,7 @@ namespace SensorbergShowcase.Pages
             if (HaveScannerSpecificEventsBeenHooked != hook)
             {
                 System.Diagnostics.Debug.WriteLine("MainPage.SetScannerSpecificEvents: " + HaveScannerSpecificEventsBeenHooked + " -> " + hook);
-                Scanner scanner = _sdkManager.Scanner;
+                IBeaconScanner scanner = _sdkManager.Scanner;
 
                 if (hook)
                 {

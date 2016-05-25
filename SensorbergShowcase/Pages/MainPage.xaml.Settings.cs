@@ -235,12 +235,20 @@ namespace SensorbergShowcase.Pages
             }
         }
 
-        private void TryToReinitializeSDK()
+        private async Task TryToReinitializeSDK()
         {
             if (_sdkManager != null)
             {
                 _sdkManager.Deinitialize(false);
-                _sdkManager.InitializeAsync(ApiKey);
+                await
+                    _sdkManager.InitializeAsync(new SdkConfiguration()
+                    {
+                        ManufacturerId = ManufacturerId,
+                        BeaconCode = BeaconCode,
+                        ApiKey = ApiKey,
+                        BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
+                        BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
+                    });
                 SetResolverSpecificEvents(true);
             }
 
@@ -305,9 +313,9 @@ namespace SensorbergShowcase.Pages
 
             if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password))
             {
-                FetchApiKeyResult result = await _apiKeyHelper.FetchApiKeyAsync(Email, Password);
+                NetworkResult result = await _apiKeyHelper.FetchApiKeyAsync(Email, Password);
 
-                if (result == FetchApiKeyResult.Success)
+                if (result == NetworkResult.Success)
                 {
                     _apiKeyWasJustSuccessfullyFetchedOrReset = true;
                     ApiKey = _apiKeyHelper.ApiKey;
@@ -320,16 +328,16 @@ namespace SensorbergShowcase.Pages
 
                     switch (result)
                     {
-                        case FetchApiKeyResult.NetworkError:
+                        case NetworkResult.NetworkError:
                             message = App.ResourceLoader.GetString("failedToFetchApiKeyDueToNetworkError/Text");
                             break;
-                        case FetchApiKeyResult.AuthenticationFailed:
+                        case NetworkResult.AuthenticationFailed:
                             message = App.ResourceLoader.GetString("authenticationFailedForFetchingApiKey/Text");
                             break;
-                        case FetchApiKeyResult.ParsingError:
+                        case NetworkResult.ParsingError:
                             message = App.ResourceLoader.GetString("failedToParseServerResponse/Text");
                             break;
-                        case FetchApiKeyResult.NoWindowsCampains:
+                        case NetworkResult.NoWindowsCampains:
                             message = App.ResourceLoader.GetString("noWindowsCampaignsAvailable/Text");
                             break;
                     }
@@ -353,7 +361,7 @@ namespace SensorbergShowcase.Pages
             Frame.Navigate(typeof(QrCodeScannerPage));
         }
 
-        private void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
+        private async void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
         {
             if (sender is ToggleSwitch)
             {
@@ -361,7 +369,7 @@ namespace SensorbergShowcase.Pages
 
                 if (enableActionsSwitch.IsOn)
                 {
-                    TryToReinitializeSDK();
+                    await TryToReinitializeSDK();
                 }
                 else
                 {
@@ -385,20 +393,20 @@ namespace SensorbergShowcase.Pages
         {
             if (sender is ToggleSwitch && (sender as ToggleSwitch).IsOn)
             {
-                if (string.IsNullOrEmpty(_sdkManager.ApiKey))
+                if (string.IsNullOrEmpty(_sdkManager.Configuration.ApiKey))
                 {
-                    _sdkManager.ApiKey = SDKManager.DemoApiKey;
+                    _sdkManager.Configuration.ApiKey = SDKManager.DemoApiKey;
                 }
 
                 BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync();
 
-                if (!result.success)
+                if (!result.Success)
                 {
                     string exceptionMessage = string.Empty;
 
-                    if (result.exception != null)
+                    if (result.Exception != null)
                     {
-                        exceptionMessage = ": " + result.exception.Message;
+                        exceptionMessage = ": " + result.Exception.Message;
                     }
 
                     (sender as ToggleSwitch).IsOn = false;

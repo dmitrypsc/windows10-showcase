@@ -3,6 +3,7 @@ using System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using SensorbergSDK.Internal.Utils;
 
 namespace SensorbergShowcase.Pages
 {
@@ -129,8 +130,20 @@ namespace SensorbergShowcase.Pages
 
                         try
                         {
-                            _advertiser.BeaconId2 = (UInt16)int.Parse(BeaconId2);
-                            _advertiser.BeaconId3 = (UInt16)int.Parse(BeaconId3);
+                            int id2 = int.Parse(BeaconId2);
+                            if (id2 > ushort.MaxValue)
+                            {
+                                ShowInformationalMessageDialogAsync("The major id is to long, it should be between 0 and "+ ushort.MaxValue);
+                                return;
+                            }
+                            int id3 = int.Parse(BeaconId3);
+                            if (id3 > ushort.MaxValue)
+                            {
+                                ShowInformationalMessageDialogAsync("The minor id is to long, it should be between 0 and " + ushort.MaxValue);
+                                return;
+                            }
+                            _advertiser.BeaconId2 = (ushort)id2;
+                            _advertiser.BeaconId3 = (ushort)id3;
 
                             _advertiser.Start();
 
