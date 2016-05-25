@@ -23,11 +23,13 @@ try {
 	stage 'build x86'
 	bat "\"${msbuild}\" /t:Clean,Build /p:Platform=x86 SensorbergShowcase.sln"
 
-		emailext body: currentBuild, subject: env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result , to: '$DEFAULT_RECIPIENTS'
+	def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result
+		emailext body: currentBuild, subject: sub , to: '$DEFAULT_RECIPIENTS'
 }
 catch(e) {
     node {
-		emailext body: currentBuild, subject: env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result , to: '$DEFAULT_RECIPIENTS'
+		def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result
+		emailext body: currentBuild, subject: sub , to: '$DEFAULT_RECIPIENTS'
     }
     throw e
 }
