@@ -28,8 +28,8 @@ try {
 }
 catch(e) {
     node {
-		def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+(currentBuild.result == null? "STABLE":currentBuild.result)
-		emailext body: currentBuild.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
+		def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - FAILED'
+		emailext body: e.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
     }
     throw e
 }
