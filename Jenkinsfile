@@ -29,7 +29,7 @@ try {
 catch(e) {
     node {
 		def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - FAILED'
-		emailext body: e.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
+		emailext body: "${env.JOB_NAME} failed with ${e.message}", subject: sub , to: '$DEFAULT_RECIPIENTS'
     }
     throw e
 }
