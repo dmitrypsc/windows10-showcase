@@ -23,13 +23,13 @@ try {
 	stage 'build x86'
 	bat "\"${msbuild}\" /t:Clean,Build /p:Platform=x86 SensorbergShowcase.sln"
 
-	def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result
-		emailext body: currentBuild.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
+	def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+(currentBuild.result == null? "STABLE":currentBuild.result)
+	emailext body: currentBuild.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
 }
 catch(e) {
     node {
-		def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - '+currentBuild.result
-		emailext body: currentBuild.toString(), subject: sub , to: '$DEFAULT_RECIPIENTS'
+		def sub = env.JOB_NAME+' - Build '+env.BUILD_NUMBER+' - FAILED'
+		emailext body: "${env.JOB_NAME} failed with ${e.message}", subject: sub , to: '$DEFAULT_RECIPIENTS'
     }
     throw e
 }

@@ -46,3 +46,7 @@ laptops, desktops).
  * **x86** or **x64** for laptops and desktops
 
 4. Build the solution (**Build** -> **Build Solution** or Ctrl+Shift+B)
+
+### Showcase App in the Store ###
+You can download the app from https://www.microsoft.com/en-us/store/apps/sensorberg-showcase/9nblggh0drgl
+![QR Code Shocase App](https://chart.googleapis.com/chart?cht=qr&chl=https://www.microsoft.com/en-us/store/apps/sensorberg-showcase/9nblggh0drgl&chs=100x100&choe=UTF-8&chld=L|2)
