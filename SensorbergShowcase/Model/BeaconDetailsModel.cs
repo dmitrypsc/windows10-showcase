@@ -180,9 +180,19 @@ namespace SensorbergShowcase.Model
             {
                 if (BeaconDetailsCollection.Count > 0)
                 {
+                    List<BeaconDetailsItem> removeItems = new List<BeaconDetailsItem>();
                     for (int i = 0; i < BeaconDetailsCollection.Count; ++i)
                     {
                         BeaconDetailsCollection[i].UpdateLastSeen();
+                        if (BeaconDetailsCollection[i].SecondsElapsedSinceLastSeen > 60)
+                        {
+                            removeItems.Add(BeaconDetailsCollection[i]);
+                        }
+                    }
+
+                    foreach (BeaconDetailsItem item in removeItems)
+                    {
+                        BeaconDetailsCollection.Remove(item);
                     }
                 }
                 else if (_updateBeaconTimesTimer != null)

@@ -71,6 +71,7 @@ namespace SensorbergShowcase.Pages
                 _sdkManager.ScannerStatusChanged += OnScannerStatusChangedAsync;
                 _sdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChangedAsync;
                 _sdkManager.BackgroundFiltersUpdated += OnBackgroundFiltersUpdatedAsync;
+                await TryToReinitializeSDK();
             }
 
             LoadApplicationSettings();
