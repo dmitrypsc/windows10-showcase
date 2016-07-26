@@ -8,6 +8,7 @@
     xmlns:converters="using:SensorbergShowcase.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="using:SensorbergShowcase.Pages"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -29,19 +30,19 @@
                     Background="Transparent"
                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                     BorderBrush="Transparent"
-                    ItemsSource="{Binding Path=BeaconModel.BeaconDetailsCollection, ElementName=thisPage}">
+                    ItemsSource="{Binding Model.BeaconModel.BeaconDetailsCollection, Mode=OneWay}">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <controls:BeaconDetailsControl Width="{Binding Path=BeaconDetailsControlWidth, ElementName=thisPage}" />
+                        <DataTemplate >
+                            <controls:BeaconDetailsControl Width="{Binding Model.BeaconDetailsControlWidth, Mode=OneWay}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Grid
                     x:Name="emptyScannerPageInfoGrid"
-                    Width="{Binding Path=BeaconDetailsControlWidth, ElementName=thisPage}"
+                    Width="{Binding Model.BeaconDetailsControlWidth, Mode=OneWay}"
                     Height="50"
                     VerticalAlignment="Center"
-                    Visibility="{Binding Path=BeaconsInRange, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+                    Visibility="{Binding Model.BeaconsInRange, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -51,7 +52,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{Binding Path=IsScanning, ElementName=thisPage, Converter={StaticResource ScannerStateTextConverter}}" />
+                        Text="{Binding Model.IsScanningText, Mode=OneWay}" />
                     <ProgressBar
                         x:Name="scannerProgressBar"
                         Grid.Row="1"
@@ -59,7 +60,7 @@
                         VerticalAlignment="Top"
                         Background="Transparent"
                         IsIndeterminate="True"
-                        Visibility="{Binding Path=IsScanning, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding Model.IsScanning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -342,7 +343,7 @@
         <Grid.Background>
             <ImageBrush
                 Stretch="UniformToFill"
-                ImageSource="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BackgroundImageSourceConverter}}" />
+                ImageSource="{Binding Model.IsBigScreen, Mode=OneWay, Converter={StaticResource BackgroundImageSourceConverter}}" />
         </Grid.Background>
 
         <!-- Hub is used on big screens -->
@@ -350,9 +351,9 @@
             x:Name="hub"
             MinWidth="1200"
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
-            Visibility="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind Model.IsBigScreen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Hub.Header>
-                <Grid Visibility="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Grid Visibility="{x:Bind Model.IsBigScreen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock
                         x:Name="pageTitle"
                         x:Uid="sensorbergShowcase"
@@ -366,7 +367,7 @@
                 <HubSection.Header>
                     <TextBlock
                         Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="{Binding Path=HeaderWithBeaconCount, ElementName=thisPage}" />
+                        Text="{x:Bind Model.HeaderWithBeaconCount, Mode=OneWay}" />
                 </HubSection.Header>
             </HubSection>
             <HubSection ContentTemplate="{StaticResource AdvertiseDataTemplate}">
@@ -389,12 +390,12 @@
         <Pivot
             x:Name="pivot"
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
-            Visibility="{Binding Path=IsBigScreen, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+            Visibility="{x:Bind Model.IsBigScreen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
             <PivotItem ContentTemplate="{StaticResource ScannerDataTemplate}">
                 <PivotItem.Header>
                     <TextBlock
                         Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="{Binding Path=HeaderWithBeaconCount, ElementName=thisPage}" />
+                        Text="{x:Bind Model.HeaderWithBeaconCount, Mode=OneWay}" />
                 </PivotItem.Header>
             </PivotItem>
             <PivotItem ContentTemplate="{StaticResource AdvertiseDataTemplate}">
@@ -426,7 +427,8 @@
                 x:Name="toggleScanButton"
                 x:Uid="toggleScanner"
                 Icon="Play"
-                IsChecked="True"
+                IsChecked="{x:Bind Model.IsScanning, Mode=OneWay}"
+                IsEnabled="True"
                 Click="OnToggleScanButtonClickedAsync" />
         </CommandBar>
     </Page.BottomAppBar>

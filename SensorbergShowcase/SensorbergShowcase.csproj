@@ -16,10 +16,11 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>SensorbergShowcase_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>SensorbergShowcase_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>59FE8657BAAB90A9FB5BF5CF0EB754385E60E6C3</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -111,6 +112,7 @@
     <Compile Include="Converters\SpecialConverters.cs" />
     <Compile Include="Model\BeaconDetailsItem.cs" />
     <Compile Include="Model\BeaconDetailsModel.cs" />
+    <Compile Include="Model\MainPageModel.cs" />
     <Compile Include="Pages\MainPage.xaml.Advertiser.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -137,6 +139,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="SensorbergShowcase_StoreKey.pfx" />
     <None Include="SensorbergShowcase_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +150,7 @@
     <Content Include="Assets\Graphics\range1.png" />
     <Content Include="Assets\Graphics\range2.png" />
     <Content Include="Assets\Graphics\range3.png" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

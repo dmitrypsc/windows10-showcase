@@ -5,6 +5,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using SensorbergShowcase.Model;
 
 namespace SensorbergShowcase.Pages
 {
@@ -25,21 +26,8 @@ namespace SensorbergShowcase.Pages
 
         private SDKManager _sdkManager;
         private bool _appIsOnForeground;
+        public MainPageModel Model { get; } = new MainPageModel();
 
-        public bool IsBigScreen
-        {
-            get
-            {
-                return (bool)GetValue(IsBigScreenProperty);
-            }
-            private set
-            {
-                SetValue(IsBigScreenProperty, value);
-            }
-        }
-        public static readonly DependencyProperty IsBigScreenProperty =
-            DependencyProperty.Register("IsBigScreen", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
 
         /// <summary>
         /// Constructor
@@ -50,7 +38,7 @@ namespace SensorbergShowcase.Pages
 
             double displaySize = DeviceUtils.ResolveDisplaySizeInInches();
             System.Diagnostics.Debug.WriteLine("Display size is " + displaySize + " inches");
-            IsBigScreen = displaySize > 6d ? true : false;
+            Model.IsBigScreen = displaySize > 6d ? true : false;
 
             hub.Background.Opacity = 0.6d;
             pivot.Background.Opacity = 0.6d;
@@ -58,6 +46,8 @@ namespace SensorbergShowcase.Pages
             SizeChanged += OnMainPageSizeChanged;
 
             MainPageScanner(); // Scanner specific construction
+
+            DataContext = this;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -85,7 +75,8 @@ namespace SensorbergShowcase.Pages
                     pivot.SelectedIndex = SettingsPivotIndex;
                 }
 
-                if (await ValidateApiKeyAsync(QrCodeScannerPage.ScannedQrCode, true) != ApiKeyValidationResult.Invalid)
+                ApiKey = QrCodeScannerPage.ScannedQrCode;
+                if (await ValidateApiKeyAsync(true) != ApiKeyValidationResult.Invalid)
                 {
                     // The key is valid (or we couldn't validate due to network error)
                     ApiKey = QrCodeScannerPage.ScannedQrCode;
@@ -93,7 +84,7 @@ namespace SensorbergShowcase.Pages
                 }
             }
             
-            ValidateApiKeyAsync(ApiKey); // Do not await
+            ValidateApiKeyAsync().ConfigureAwait(false); // Do not await
 
             if (_advertiser == null)
             {
@@ -102,9 +93,7 @@ namespace SensorbergShowcase.Pages
                 _advertiser.BeaconCode = BeaconCode;
             }
 
-            toggleScanButton.IsEnabled = false;
             SetScannerSpecificEvents(true);
-            _sdkManager.StartScanner();
 
             Window.Current.VisibilityChanged += OnVisibilityChanged;
         }
@@ -212,7 +201,7 @@ namespace SensorbergShowcase.Pages
 
         private void OnMainPageSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (IsBigScreen)
+            if (Model.IsBigScreen)
             {
                 // No implementation required
             }
@@ -220,7 +209,7 @@ namespace SensorbergShowcase.Pages
             {
                 if (layoutGrid.ActualWidth > 0)
                 {
-                    BeaconDetailsControlWidth = layoutGrid.ActualWidth - 40d;
+                    Model.BeaconDetailsControlWidth = layoutGrid.ActualWidth - 40d;
                 }
             }
         }

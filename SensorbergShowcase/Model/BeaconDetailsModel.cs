@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace SensorbergShowcase.Model
 {
-    public class BeaconDetailsModel
+    public class BeaconDetailsModel:INotifyPropertyChanged
     {
         public readonly Dictionary<string, string> UUIDMap = new Dictionary<string, string>()
         {
@@ -31,11 +33,16 @@ namespace SensorbergShowcase.Model
         };
 
         private Timer _updateBeaconTimesTimer;
- 
+        private ObservableCollection<BeaconDetailsItem> _beaconDetailsCollection;
+
         public ObservableCollection<BeaconDetailsItem> BeaconDetailsCollection
         {
-            get;
-            set;
+            get { return _beaconDetailsCollection; }
+            set
+            {
+                _beaconDetailsCollection = value;
+                OnPropertyChanged();
+            }
         }
 
         public BeaconDetailsModel()
@@ -201,6 +208,13 @@ namespace SensorbergShowcase.Model
                     _updateBeaconTimesTimer = null;
                 }
             });         
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

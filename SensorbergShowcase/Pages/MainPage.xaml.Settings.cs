@@ -240,8 +240,7 @@ namespace SensorbergShowcase.Pages
             if (_sdkManager != null)
             {
                 _sdkManager.Deinitialize(false);
-                await
-                    _sdkManager.InitializeAsync(new SdkConfiguration()
+                await _sdkManager.InitializeAsync(new SdkConfiguration()
                     {
                         ManufacturerId = ManufacturerId,
                         BeaconCode = BeaconCode,
@@ -249,6 +248,7 @@ namespace SensorbergShowcase.Pages
                         BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
                         BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
                     });
+                _sdkManager.StartScanner();
                 SetResolverSpecificEvents(true);
             }
 
@@ -265,8 +265,7 @@ namespace SensorbergShowcase.Pages
         /// <param name="apiKey">The API key to validate.</param>
         /// <param name="displayResultDialogInCaseOfFailure">If true, will display a result dialog in case of an error.</param>
         /// <returns>The API key validation result.</returns>
-        private async Task<ApiKeyValidationResult> ValidateApiKeyAsync(
-            string apiKey, bool displayResultDialogInCaseOfFailure = false)
+        private async Task<ApiKeyValidationResult> ValidateApiKeyAsync(bool displayResultDialogInCaseOfFailure = false)
         {
             IsValidatingOrFetchingApiKey = true;
 
@@ -302,9 +301,9 @@ namespace SensorbergShowcase.Pages
             return result;
         }
 
-        private void OnValidateApiKeyButtonClicked(object sender, RoutedEventArgs e)
+        private async void OnValidateApiKeyButtonClicked(object sender, RoutedEventArgs e)
         {
-            ValidateApiKeyAsync(ApiKey, true);
+            await ValidateApiKeyAsync(true);
         }
 
         private async void OnFetchApiKeyButtonClickedAsync(object sender, RoutedEventArgs e)

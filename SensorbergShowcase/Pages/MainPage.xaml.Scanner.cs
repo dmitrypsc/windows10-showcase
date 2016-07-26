@@ -7,6 +7,7 @@ using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using MetroLog;
 using SensorbergSDK.Internal;
 using SensorbergSDK.Internal.Services;
 using SensorbergSDK.Services;
@@ -18,96 +19,16 @@ namespace SensorbergShowcase.Pages
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private static readonly ILogger Logger = LogManagerFactory.DefaultLogManager.GetLogger<MainPage>();
         private const double DefaultBeaconDetailsControlWidth = 350d;
         private IAsyncOperation<IUICommand> _bluetoothNotOnDialogOperation;
-
-        public BeaconDetailsModel BeaconModel
-        {
-            get
-            {
-                return (BeaconDetailsModel)GetValue(BeaconModelProperty);
-            }
-            private set
-            {
-                SetValue(BeaconModelProperty, value);
-            }
-        }
-        public static readonly DependencyProperty BeaconModelProperty =
-            DependencyProperty.Register("BeaconModel", typeof(BeaconDetailsModel), typeof(MainPage),
-                new PropertyMetadata(null));
-
-        public double BeaconDetailsControlWidth
-        {
-            get
-            {
-                return (double)GetValue(BeaconDetailsControlWidthProperty);
-            }
-            private set
-            {
-                SetValue(BeaconDetailsControlWidthProperty, value);
-            }
-        }
-        public static readonly DependencyProperty BeaconDetailsControlWidthProperty =
-            DependencyProperty.Register("BeaconDetailsControlWidth", typeof(double), typeof(MainPage),
-                new PropertyMetadata(DefaultBeaconDetailsControlWidth));
- 
-        public bool HaveScannerSpecificEventsBeenHooked
-        {
-            get;
-            private set;
-        }
-
-        public bool IsScanning
-        {
-            get
-            {
-                return (bool)GetValue(IsScanningProperty);
-            }
-            private set
-            {
-                SetValue(IsScanningProperty, value);
-            }
-        }
-        public static readonly DependencyProperty IsScanningProperty =
-            DependencyProperty.Register("IsScanning", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
-
-        public bool BeaconsInRange
-        {
-            get
-            {
-                return (bool)GetValue(BeaconsInRangeProperty);
-            }
-            private set
-            {
-                SetValue(BeaconsInRangeProperty, value);
-            }
-        }
-        public static readonly DependencyProperty BeaconsInRangeProperty =
-            DependencyProperty.Register("BeaconsInRange", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
-
-        public string HeaderWithBeaconCount
-        {
-            get
-            {
-                return (string)GetValue(HeaderWithBeaconCountProperty);
-            }
-            private set
-            {
-                SetValue(HeaderWithBeaconCountProperty, value);
-            }
-        }
-        public static readonly DependencyProperty HeaderWithBeaconCountProperty =
-            DependencyProperty.Register("HeaderWithBeaconCount", typeof(string), typeof(MainPage),
-                new PropertyMetadata(null));
 
         /// <summary>
         /// Should be called in the constructor of this page. Handles the scanner specific construction.
         /// </summary>
         private void MainPageScanner()
         {
-            BeaconModel = new BeaconDetailsModel();
+            Model.BeaconModel = new BeaconDetailsModel();
             UpdateBeaconCountInHeader(0);
         }
 
@@ -117,25 +38,25 @@ namespace SensorbergShowcase.Pages
         /// <param name="hook">If true, will hook the events. If false, will unhook.</param>
         private void SetScannerSpecificEvents(bool hook)
         {
-            if (HaveScannerSpecificEventsBeenHooked != hook)
+            if (Model.HaveScannerSpecificEventsBeenHooked != hook)
             {
-                System.Diagnostics.Debug.WriteLine("MainPage.SetScannerSpecificEvents: " + HaveScannerSpecificEventsBeenHooked + " -> " + hook);
+                System.Diagnostics.Debug.WriteLine("MainPage.SetScannerSpecificEvents: " + Model.HaveScannerSpecificEventsBeenHooked + " -> " + hook);
                 IBeaconScanner scanner = _sdkManager.Scanner;
 
                 if (hook)
                 {
                     scanner.BeaconEvent += OnBeaconEventAsync;
                     scanner.BeaconNotSeenForAWhile += OnBeaconNotSeenForAWhileAsync;
-                    BeaconModel.BeaconDetailsCollection.CollectionChanged += OnBeaconDetailsCollectionChanged;
+                    Model.BeaconModel.BeaconDetailsCollection.CollectionChanged += OnBeaconDetailsCollectionChanged;
                 }
                 else
                 {
                     scanner.BeaconEvent -= OnBeaconEventAsync;
                     scanner.BeaconNotSeenForAWhile -= OnBeaconNotSeenForAWhileAsync;
-                    BeaconModel.BeaconDetailsCollection.CollectionChanged -= OnBeaconDetailsCollectionChanged;
+                    Model.BeaconModel.BeaconDetailsCollection.CollectionChanged -= OnBeaconDetailsCollectionChanged;
                 }
 
-                HaveScannerSpecificEventsBeenHooked = hook;
+                Model.HaveScannerSpecificEventsBeenHooked = hook;
             }
         }
 
@@ -147,16 +68,13 @@ namespace SensorbergShowcase.Pages
         {
             if (isScannerRunning)
             {
-                toggleScanButton.IsChecked = true;
                 toggleScanButton.Label = App.ResourceLoader.GetString("stopScanner/Label");
             }
             else
             {
-                toggleScanButton.IsChecked = false;
                 toggleScanButton.Label = App.ResourceLoader.GetString("startScanner/Label");
             }
 
-            toggleScanButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -166,7 +84,7 @@ namespace SensorbergShowcase.Pages
         private void UpdateBeaconCountInHeader(int beaconCount)
         {
             string scannerWithBeaconCountText = App.ResourceLoader.GetString("scannerWithBeaconCount/Text");
-            HeaderWithBeaconCount = string.Format(scannerWithBeaconCountText, beaconCount);
+            Model.HeaderWithBeaconCount = string.Format(scannerWithBeaconCountText, beaconCount);
         }
 
         private void OnBeaconDetailsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -180,45 +98,52 @@ namespace SensorbergShowcase.Pages
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                Beacon beacon = eventArgs.Beacon;
-
-                if (eventArgs.EventType != BeaconEventType.None)
+                try
                 {
-                    System.Diagnostics.Debug.WriteLine("MainPage.OnBeaconEventAsync: '"
-                        + eventArgs.EventType + "' event from " + beacon.ToString());
-                }
+                    Beacon beacon = eventArgs.Beacon;
 
-                bool isExistingBeacon = false;
-
-                if (BeaconModel.Contains(beacon))
-                {
-                    if (eventArgs.EventType == BeaconEventType.Exit)
+                    if (eventArgs.EventType != BeaconEventType.None)
                     {
-                        BeaconModel.Remove(beacon);
+                        System.Diagnostics.Debug.WriteLine("MainPage.OnBeaconEventAsync: '"
+                                                           + eventArgs.EventType + "' event from " + beacon.ToString());
+                    }
+
+                    bool isExistingBeacon = false;
+
+                    if (Model.BeaconModel.Contains(beacon))
+                    {
+                        if (eventArgs.EventType == BeaconEventType.Exit)
+                        {
+                            Model.BeaconModel.Remove(beacon);
+                        }
+                        else 
+                        {
+                            Model.BeaconModel.AddOrReplace(beacon);
+                        }
+
+                        Model.BeaconModel.SortBeaconsBasedOnDistance();
+                        isExistingBeacon = true;
+                    }
+
+
+                    if (!isExistingBeacon)
+                    {
+                        Model.BeaconModel.AddOrReplace(beacon);
+                        Model.BeaconModel.SortBeaconsBasedOnDistance();
+                    }
+
+                    if (Model.BeaconModel.Count() > 0)
+                    {
+                        Model.BeaconsInRange = true;
                     }
                     else
                     {
-                        BeaconModel.AddOrReplace(beacon);
+                        Model.BeaconsInRange = false;
                     }
-
-                    BeaconModel.SortBeaconsBasedOnDistance();
-                    isExistingBeacon = true;
                 }
-
-
-                if (!isExistingBeacon)
+                catch (Exception e)
                 {
-                    BeaconModel.AddOrReplace(beacon);
-                    BeaconModel.SortBeaconsBasedOnDistance();
-                }
-
-                if (BeaconModel.Count() > 0)
-                {
-                    BeaconsInRange = true;
-                }
-                else
-                {
-                    BeaconsInRange = false;
+                    Logger.Error("Error while add/update beacon", e);
                 }
             });
         }
@@ -227,7 +152,7 @@ namespace SensorbergShowcase.Pages
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                BeaconModel.SetBeaconRange(e, 0);
+                Model.BeaconModel.SetBeaconRange(e, 0);
             });
         }
 
@@ -235,8 +160,6 @@ namespace SensorbergShowcase.Pages
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                toggleScanButton.IsEnabled = false;
-
                 if (_sdkManager.IsScannerStarted)
                 {
                     _sdkManager.StopScanner();
@@ -253,10 +176,10 @@ namespace SensorbergShowcase.Pages
         {
             System.Diagnostics.Debug.WriteLine("MainPage.OnScannerStatusChangedAsync: " + e);
 
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                IsScanning = (e == ScannerStatus.Started);
-                SetToggleScannerButtonProperties(IsScanning);
+                Model.IsScanning = e == ScannerStatus.Started;
+                //SetToggleScannerButtonProperties(Model.IsScanning.Value);
 
                 switch (e)
                 {
@@ -294,7 +217,7 @@ namespace SensorbergShowcase.Pages
                                     _bluetoothNotOnDialogOperation = null;
                                 })));
 
-                            _bluetoothNotOnDialogOperation = messageDialog.ShowAsync();
+                            await messageDialog.ShowAsync();
                         }
 
                         break;
