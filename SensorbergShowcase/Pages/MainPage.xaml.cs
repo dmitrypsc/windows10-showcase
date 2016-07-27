@@ -109,7 +109,6 @@ namespace SensorbergShowcase.Pages
             _sdkManager.BackgroundFiltersUpdated -= OnBackgroundFiltersUpdatedAsync;
 
             SetScannerSpecificEvents(false);
-            SetResolverSpecificEvents(false);
 
             if (_sdkManager.IsScannerStarted)
             {
@@ -203,7 +202,7 @@ namespace SensorbergShowcase.Pages
         {
             if (Model.IsBigScreen)
             {
-                // No implementation required
+                Model.BeaconDetailsControlWidth = 350d;
             }
             else
             {

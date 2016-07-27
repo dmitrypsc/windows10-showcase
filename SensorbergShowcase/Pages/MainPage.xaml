@@ -30,19 +30,19 @@
                     Background="Transparent"
                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                     BorderBrush="Transparent"
-                    ItemsSource="{Binding Model.BeaconModel.BeaconDetailsCollection, Mode=OneWay}">
+                    ItemsSource="{Binding Model.BeaconModel.BeaconDetailsCollection, ElementName=thisPage, Mode=OneWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate >
-                            <controls:BeaconDetailsControl Width="{Binding Model.BeaconDetailsControlWidth, Mode=OneWay}" />
+                            <controls:BeaconDetailsControl Width="{Binding Model.BeaconDetailsControlWidth, ElementName=thisPage, Mode=OneWay}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Grid
                     x:Name="emptyScannerPageInfoGrid"
-                    Width="{Binding Model.BeaconDetailsControlWidth, Mode=OneWay}"
+                    Width="{Binding Model.BeaconDetailsControlWidth, ElementName=thisPage, Mode=OneWay}"
                     Height="50"
                     VerticalAlignment="Center"
-                    Visibility="{Binding Model.BeaconsInRange, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+                    Visibility="{Binding Model.BeaconsInRange, ElementName=thisPage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -52,7 +52,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{Binding Model.IsScanningText, Mode=OneWay}" />
+                        Text="{Binding Model.IsScanningText, ElementName=thisPage, Mode=OneWay}" />
                     <ProgressBar
                         x:Name="scannerProgressBar"
                         Grid.Row="1"
@@ -60,7 +60,7 @@
                         VerticalAlignment="Top"
                         Background="Transparent"
                         IsIndeterminate="True"
-                        Visibility="{Binding Model.IsScanning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding Model.IsScanning, ElementName=thisPage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -157,11 +157,11 @@
                                 Grid.Column="1"
                                 Margin="0,0,-60,0"
                                 HorizontalAlignment="Right"
-                                IsOn="{Binding Path=AreActionsEnabled, ElementName=thisPage, Mode=TwoWay}"
+                                IsOn="{Binding Path=Model.AreActionsEnabled, ElementName=thisPage, Mode=TwoWay}"
                                 Toggled="OnEnableActionsSwitchToggled" />
                         </Grid>
                         <Grid Margin="0,-6,0,0"
-                              Visibility="{Binding Path=AreActionsEnabled, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
+                              Visibility="{Binding Path=Model.AreActionsEnabled, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
                             <TextBlock
                                 x:Uid="sdkStatusOk"
                                 Style="{ThemeResource BodyTextBlockStyle}"
@@ -196,8 +196,28 @@
                                 Grid.Column="1"
                                 Margin="0,-6,-60,0"
                                 HorizontalAlignment="Right"
-                                IsOn="{Binding Path=IsBackgroundTaskRegistered, ElementName=thisPage}"
+                                IsOn="{Binding Path=Model.ShouldRegisterBackgroundTask, ElementName=thisPage, Mode=TwoWay}"
                                 Toggled="OnEnableBackgroundTaskSwitchToggledAsync" />
+                        </Grid>
+                        <Grid Margin="0,-6,0,0"
+                              Visibility="{Binding Path=Model.ShouldRegisterBackgroundTask, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <TextBlock
+                                x:Uid="bgTaskStatusOk"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Opacity="0.8"
+                                Foreground="Green"
+                                FontWeight="ExtraLight"
+                                FontStyle="Italic"
+                                TextWrapping="Wrap"
+                                Visibility="{Binding Path=Model.IsBackgroundTaskRegistered, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock
+                                x:Uid="bgTaskStatusNotRegistered"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Foreground="Red"
+                                FontWeight="ExtraLight"
+                                FontStyle="Italic"
+                                TextWrapping="Wrap"
+                                Visibility="{Binding Path=Model.IsBackgroundTaskRegistered, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
                         </Grid>
 
                         <!-- API key settings -->
@@ -334,12 +354,6 @@
     </Page.Resources>
 
     <Grid x:Name="layoutGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
         <Grid.Background>
             <ImageBrush
                 Stretch="UniformToFill"
@@ -384,6 +398,20 @@
                         Style="{StaticResource SubheaderTextBlockStyle}" />
                 </HubSection.Header>
             </HubSection>
+            <HubSection>
+                <HubSection.Header>
+                    <TextBlock
+                        x:Uid="actions"
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                </HubSection.Header>
+                <HubSection.ContentTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ListView ItemsSource="{Binding Model.ResolvedActions}" />
+                        </Grid>
+                    </DataTemplate>
+                </HubSection.ContentTemplate>
+            </HubSection>
         </Hub>
 
         <!-- Pivot is used on smaller screen (phones) -->
@@ -412,6 +440,20 @@
                         Style="{StaticResource SubheaderTextBlockStyle}" />
                 </PivotItem.Header>
             </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock
+                        x:Uid="actions"
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                </PivotItem.Header>
+                <PivotItem.ContentTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ListView ItemsSource="{Binding Model.ResolvedActions}" />
+                        </Grid>
+                    </DataTemplate>
+                </PivotItem.ContentTemplate>
+            </PivotItem>
         </Pivot>
     </Grid>
 
@@ -433,4 +475,6 @@
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
+
+
 

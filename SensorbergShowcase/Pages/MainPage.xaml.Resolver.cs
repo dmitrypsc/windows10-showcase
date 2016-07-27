@@ -35,30 +35,6 @@ namespace SensorbergShowcase.Pages
             DependencyProperty.Register("IsLayoutValid", typeof(bool), typeof(MainPage),
                 new PropertyMetadata(false));
 
-        /// <summary>
-        /// Hooks/unhooks the resolver specific events. If already hooked/unhooked, does nothing.
-        /// </summary>
-        /// <param name="hook">If true, will hook the events. If false, will unhook.</param>
-        private void SetResolverSpecificEvents(bool hook)
-        {
-            if (HaveResolverSpecificEventsBeenHooked != hook)
-            {
-                Debug.WriteLine("MainPage.SetResolverSpecificEvents: " + HaveResolverSpecificEventsBeenHooked + " -> " + hook);
-
-                if (hook)
-                {
-                    _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
-                    _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
-                }
-                else
-                {
-                    _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
-                    _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
-                }
-
-                HaveResolverSpecificEventsBeenHooked = hook;
-            }
-        }
 
         private async void OnBeaconLayoutValidityChangedAsync(object sender, bool e)
         {
@@ -75,6 +51,12 @@ namespace SensorbergShowcase.Pages
         /// <param name="e"></param>
         private async void OnBeaconActionResolvedAsync(object sender, BeaconAction e)
         {
+            if (!Model.AreActionsEnabled)
+            {
+                return;
+            }
+            Model.ActionResolved(e);
+            return;
             if (_messageDialogIsOpen)
             {
                 return;
