@@ -472,6 +472,9 @@
                 IsChecked="{x:Bind Model.IsScanning, Mode=OneWay}"
                 IsEnabled="True"
                 Click="OnToggleScanButtonClickedAsync" />
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Label="Logs verschicken" Command="{x:Bind SendLogsCommand}"/>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

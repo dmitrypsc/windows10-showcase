@@ -6,7 +6,10 @@ using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using MetroLog;
+using MetroLog.Targets;
 using SensorbergShowcase.Pages;
+using SensorbergShowcase.Utils;
 
 namespace SensorbergShowcase
 {
@@ -16,6 +19,7 @@ namespace SensorbergShowcase
     sealed partial class App : Application
     {
         private static ResourceLoader _resourceLoader;
+
         /// <summary>
         /// Resource loader for app-wide localization needs.
         /// </summary>

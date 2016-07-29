@@ -134,6 +134,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ContinousAutoFocus.cs" />
     <Compile Include="Utils\DeviceUtils.cs" />
+    <Compile Include="Utils\InMemoryLogTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

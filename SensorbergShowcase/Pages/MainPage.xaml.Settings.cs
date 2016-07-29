@@ -125,6 +125,7 @@ namespace SensorbergShowcase.Pages
 
         private void LoadApplicationSettings()
         {
+            Logger.Debug("LoadApplicationSettings");
             if (_localSettings.Values.ContainsKey(KeyEnableActions))
             {
                 Model.AreActionsEnabled = (bool)_localSettings.Values[KeyEnableActions];
@@ -179,6 +180,7 @@ namespace SensorbergShowcase.Pages
         /// specific settings related to the given key.</param>
         private void SaveApplicationSettings(string key = null)
         {
+            Logger.Debug("SaveApplicationSettings Key={0}", key);
             if (string.IsNullOrEmpty(key) || key.Equals(KeyEnableActions))
             {
                 _localSettings.Values[KeyEnableActions] = Model.AreActionsEnabled;
@@ -207,24 +209,25 @@ namespace SensorbergShowcase.Pages
 
         private async Task TryToReinitializeSDK()
         {
+            Logger.Debug("TryToReinitializeSDK {0}", _sdkManager != null);
             if (_sdkManager != null)
             {
                 _sdkManager.Deinitialize(false);
                 _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
                 _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
                 await _sdkManager.InitializeAsync(new SdkConfiguration()
-                    {
-                        ManufacturerId = ManufacturerId,
-                        BeaconCode = BeaconCode,
-                        ApiKey = ApiKey,
-                        BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
-                        BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
-                    });
+                {
+                    ManufacturerId = ManufacturerId,
+                    BeaconCode = BeaconCode,
+                    ApiKey = ApiKey,
+                    BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
+                    BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
+                });
                 _sdkManager.StartScanner();
 
 
-                    _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
-                    _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
+                _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
+                _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
 
             }
         }
@@ -232,7 +235,6 @@ namespace SensorbergShowcase.Pages
         /// <summary>
         /// Validates the given API key.
         /// </summary>
-        /// <param name="apiKey">The API key to validate.</param>
         /// <param name="displayResultDialogInCaseOfFailure">If true, will display a result dialog in case of an error.</param>
         /// <returns>The API key validation result.</returns>
         private async Task<ApiKeyValidationResult> ValidateApiKeyAsync(bool displayResultDialogInCaseOfFailure = false)
@@ -330,7 +332,7 @@ namespace SensorbergShowcase.Pages
             Frame.Navigate(typeof(QrCodeScannerPage));
         }
 
-        private async void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
+        private void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
         {
             SaveApplicationSettings(KeyEnableActions);
         }

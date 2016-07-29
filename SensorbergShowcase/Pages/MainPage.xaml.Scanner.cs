@@ -19,7 +19,6 @@ namespace SensorbergShowcase.Pages
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private static readonly ILogger Logger = LogManagerFactory.DefaultLogManager.GetLogger<MainPage>();
         private const double DefaultBeaconDetailsControlWidth = 350d;
         private IAsyncOperation<IUICommand> _bluetoothNotOnDialogOperation;
 
@@ -38,9 +37,9 @@ namespace SensorbergShowcase.Pages
         /// <param name="hook">If true, will hook the events. If false, will unhook.</param>
         private void SetScannerSpecificEvents(bool hook)
         {
+            Logger.Debug("MainPage.SetScannerSpecificEvents: " + Model.HaveScannerSpecificEventsBeenHooked + " -> " + hook);
             if (Model.HaveScannerSpecificEventsBeenHooked != hook)
             {
-                System.Diagnostics.Debug.WriteLine("MainPage.SetScannerSpecificEvents: " + Model.HaveScannerSpecificEventsBeenHooked + " -> " + hook);
                 IBeaconScanner scanner = _sdkManager.Scanner;
 
                 if (hook)
@@ -104,8 +103,7 @@ namespace SensorbergShowcase.Pages
 
                     if (eventArgs.EventType != BeaconEventType.None)
                     {
-                        System.Diagnostics.Debug.WriteLine("MainPage.OnBeaconEventAsync: '"
-                                                           + eventArgs.EventType + "' event from " + beacon.ToString());
+                        Logger.Debug("MainPage.OnBeaconEventAsync: '" + eventArgs.EventType + "' event from " + beacon);
                     }
 
                     bool isExistingBeacon = false;
@@ -150,7 +148,8 @@ namespace SensorbergShowcase.Pages
 
         private async void OnBeaconNotSeenForAWhileAsync(object sender, Beacon e)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            Logger.Debug("BeaconNotSeenForAWhileAsync {0}", e);
+               await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 Model.BeaconModel.SetBeaconRange(e, 0);
             });
@@ -174,7 +173,7 @@ namespace SensorbergShowcase.Pages
 
         private async void OnScannerStatusChangedAsync(object sender, ScannerStatus e)
         {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnScannerStatusChangedAsync: " + e);
+            Logger.Debug("MainPage.OnScannerStatusChangedAsync: " + e);
 
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {

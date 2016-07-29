@@ -1,10 +1,21 @@
 ﻿using SensorbergSDK;
 using SensorbergShowcase.Utils;
 using System;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Email;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using MetroLog;
 using SensorbergShowcase.Model;
 
 namespace SensorbergShowcase.Pages
@@ -19,14 +30,16 @@ namespace SensorbergShowcase.Pages
         /*
          * Insert the manufacturer ID and beacon code for filtering beacons below.
          */
-        private const UInt16 ManufacturerId = 0x004c;
-        private const UInt16 BeaconCode = 0x0215;
+        private const ushort ManufacturerId = 0x004c;
+        private const ushort BeaconCode = 0x0215;
 
+        private static readonly ILogger Logger = LogManagerFactory.DefaultLogManager.GetLogger<MainPage>();
         private const int SettingsPivotIndex = 2;
 
         private SDKManager _sdkManager;
         private bool _appIsOnForeground;
         public MainPageModel Model { get; } = new MainPageModel();
+        public ICommand SendLogsCommand { get; } = new SendLogsCommand();
 
 
         /// <summary>
@@ -52,7 +65,7 @@ namespace SensorbergShowcase.Pages
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo");
+            Logger.Debug("MainPage.OnNavigatedTo");
             base.OnNavigatedTo(e);
 
             if (_sdkManager == null)
@@ -68,7 +81,7 @@ namespace SensorbergShowcase.Pages
 
             if (QrCodeScannerPage.ScannedQrCode != null)
             {
-                System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
+                Logger.Debug("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
                 
                 if (pivot.Visibility == Visibility.Visible)
                 {
@@ -100,7 +113,7 @@ namespace SensorbergShowcase.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedFrom");
+            Logger.Debug("MainPage.OnNavigatedFrom");
 
             Window.Current.VisibilityChanged -= OnVisibilityChanged;
 
@@ -210,6 +223,37 @@ namespace SensorbergShowcase.Pages
                 {
                     Model.BeaconDetailsControlWidth = layoutGrid.ActualWidth - 40d;
                 }
+            }
+        }
+    }
+    public class SendLogsCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public async void Execute(object parameter)
+        {
+            var emailMessage = new EmailMessage();
+            emailMessage.Subject = emailMessage.Body = "Logs from " + Package.Current.DisplayName;
+            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+            {
+                Stream s = await LogManagerFactory.DefaultLogManager.GetCompressedLogs();
+                MemoryStream m = new MemoryStream();
+                await s.CopyToAsync(m);
+                byte[] b = m.ToArray();
+                InMemoryRandomAccessStream mem = new InMemoryRandomAccessStream();
+                await mem.WriteAsync(b.AsBuffer());
+
+                emailMessage.Attachments.Add(new EmailAttachment("logs.zip", RandomAccessStreamReference.CreateFromStream(mem)));
+                await EmailManager.ShowComposeNewEmailAsync(emailMessage);
+            }
+            else
+            {
+                await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder);
             }
         }
     }

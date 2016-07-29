@@ -51,69 +51,12 @@ namespace SensorbergShowcase.Pages
         /// <param name="e"></param>
         private async void OnBeaconActionResolvedAsync(object sender, BeaconAction e)
         {
+            Logger.Debug("OnBeaconActionResolvedAsync (enabled {0}) Action {1}", Model.AreActionsEnabled, e);
             if (!Model.AreActionsEnabled)
             {
                 return;
             }
             Model.ActionResolved(e);
-            return;
-            if (_messageDialogIsOpen)
-            {
-                return;
-            }
-
-            MessageDialog messageDialog = e.ToMessageDialog();
-
-            switch (e.Type)
-            {
-                case BeaconActionType.UrlMessage:
-                case BeaconActionType.VisitWebsite:
-                    messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("yes/Text"),
-                        new UICommandInvokedHandler(async (command) =>
-                        {
-                            await Windows.System.Launcher.LaunchUriAsync(new Uri(e.Url));
-                        })));
-
-                    messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("no/Text")));
-
-
-                    Debug.WriteLine("MainPage.OnBeaconActionResolvedAsync: Message dialog is open");
-                    _messageDialogIsOpen = true;
-
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        try
-                        {
-                            await messageDialog.ShowAsync();
-                        }
-                        catch
-                        {
-                            // For showing more than one message dialog at one time.
-                        }
-                    });
-
-                    Debug.WriteLine("MainPage.OnBeaconActionResolvedAsync: Message dialog is closed");
-                    _messageDialogIsOpen = false;
-                    break;
-
-                case BeaconActionType.InApp:
-                    _messageDialogIsOpen = true;
-
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        try
-                        {
-                            await messageDialog.ShowAsync();
-                        }
-                        catch
-                        {
-                            // For showing more than one message dialog at one time.
-                        }
-                    });
-
-                    _messageDialogIsOpen = false;
-                    break;
-            }
         }
 
         /// <summary>
