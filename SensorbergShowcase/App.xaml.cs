@@ -6,10 +6,8 @@ using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using MetroLog;
-using MetroLog.Targets;
+using Microsoft.HockeyApp;
 using SensorbergShowcase.Pages;
-using SensorbergShowcase.Utils;
 
 namespace SensorbergShowcase
 {
@@ -44,6 +42,7 @@ namespace SensorbergShowcase
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            HockeyClient.Current.Configure("d98620a9d3984f349f8685a25a3cfae1");
         }
 
         /// <summary>

@@ -3,9 +3,11 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
 using SensorbergSDK.Internal.Data;
+using SensorbergSDK.Internal.Services;
 using SensorbergShowcase.Controls;
 
 namespace SensorbergShowcase.Pages
@@ -182,20 +184,29 @@ namespace SensorbergShowcase.Pages
                 _sdkManager.Deinitialize(false);
                 _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
                 _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
-                await _sdkManager.InitializeAsync(new SdkConfiguration()
+                SdkConfiguration sdkConfiguration = new SdkConfiguration()
                 {
                     ManufacturerId = ManufacturerId,
                     BeaconCode = BeaconCode,
                     ApiKey = Model.ApiKey,
                     BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
                     BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
-                });
+                };
+
+                if (ServiceManager.LayoutManager.Layout != null)
+                {
+                    IList<string> ids = ServiceManager.LayoutManager.Layout.AccountBeaconId1S;
+                    if (ids.Count > 0)
+                    {
+                        sdkConfiguration.BackgroundBeaconUuidSpace = ids[0];
+                    }
+                }
+                await _sdkManager.InitializeAsync(sdkConfiguration);
                 _sdkManager.StartScanner();
 
 
                 _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
                 _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
-
             }
         }
 
@@ -320,6 +331,14 @@ namespace SensorbergShowcase.Pages
                 if (string.IsNullOrEmpty(_sdkManager.Configuration.ApiKey))
                 {
                     _sdkManager.Configuration.ApiKey = SDKManager.DemoApiKey;
+                }
+                if (ServiceManager.LayoutManager.Layout != null)
+                {
+                    IList<string> ids = ServiceManager.LayoutManager.Layout.AccountBeaconId1S;
+                    if (ids.Count > 0)
+                    {
+                        _sdkManager.Configuration.BackgroundBeaconUuidSpace = ids[0];
+                    }
                 }
 
                 BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync();
