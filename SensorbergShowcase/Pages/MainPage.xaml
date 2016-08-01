@@ -350,7 +350,7 @@
                         </Button>
                         <StackPanel Margin="10" Visibility="{Binding Model.ShowApiKeySelection, Converter={StaticResource BoolToVisibilityConverter}}">
                             <TextBlock Text="Select the application to use:"/>
-                            <ComboBox Name="appCombobox" ItemsSource="{Binding Model.Applications}" SelectedItem="{Binding Model.Application, Mode=TwoWay}" SelectionChanged="AppCombobox_OnSelectionChanged" Margin="0,10,0,0">
+                            <ComboBox Name="appCombobox" ItemsSource="{Binding Model.Applications}" SelectedItem="{Binding Model.Application, Mode=TwoWay}" Margin="0,10,0,0">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate x:DataType="data:SensorbergApplication">
                                         <TextBlock Text="{x:Bind AppName}"/>

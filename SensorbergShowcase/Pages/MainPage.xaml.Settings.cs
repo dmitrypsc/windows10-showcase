@@ -213,6 +213,7 @@ namespace SensorbergShowcase.Pages
             if (result == ApiKeyValidationResult.Valid)
             {
                 Model.IsApiKeyValid = true;
+                await TryToReinitializeSDK();
             }
             else
             {
@@ -367,6 +368,11 @@ namespace SensorbergShowcase.Pages
                     }
 
                     await _sdkManager.InvalidateCacheAsync();
+
+                    if (Model.ApiKey.Length > 25)
+                    {
+                        await ValidateApiKeyAsync();
+                    }
                 }
                 else if (textBoxName.StartsWith("email"))
                 {
@@ -384,11 +390,6 @@ namespace SensorbergShowcase.Pages
                 Password = (sender as PasswordBox).Password;
                 SaveApplicationSettings(KeyApiKey);
             }
-        }
-
-        private void AppCombobox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ValidateApiKeyAsync();
         }
     }
 }

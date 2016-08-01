@@ -82,20 +82,16 @@ namespace SensorbergShowcase.Pages
             if (QrCodeScannerPage.ScannedQrCode != null)
             {
                 Logger.Debug("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
-                
+
                 if (pivot.Visibility == Visibility.Visible)
                 {
                     pivot.SelectedIndex = SettingsPivotIndex;
                 }
 
                 Model.ApiKey = QrCodeScannerPage.ScannedQrCode;
-                if (await ValidateApiKeyAsync(true) != ApiKeyValidationResult.Invalid)
-                {
-                    // The key is valid (or we couldn't validate due to network error)
-                    SaveApplicationSettings(KeyApiKey);
-                }
+                SaveApplicationSettings(KeyApiKey);
             }
-            
+
             ValidateApiKeyAsync().ConfigureAwait(false); // Do not await
 
             if (_advertiser == null)
