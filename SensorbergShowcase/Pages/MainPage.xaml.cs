@@ -88,11 +88,10 @@ namespace SensorbergShowcase.Pages
                     pivot.SelectedIndex = SettingsPivotIndex;
                 }
 
-                ApiKey = QrCodeScannerPage.ScannedQrCode;
+                Model.ApiKey = QrCodeScannerPage.ScannedQrCode;
                 if (await ValidateApiKeyAsync(true) != ApiKeyValidationResult.Invalid)
                 {
                     // The key is valid (or we couldn't validate due to network error)
-                    ApiKey = QrCodeScannerPage.ScannedQrCode;
                     SaveApplicationSettings(KeyApiKey);
                 }
             }
@@ -172,7 +171,7 @@ namespace SensorbergShowcase.Pages
 
             statusAsContentString +=
                 "\n" + App.ResourceLoader.GetString("apiKey/Text") + ": "
-                + (IsApiKeyValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"))
+                + (Model.IsApiKeyValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"))
                 + "\n" + App.ResourceLoader.GetString("beaconLayout/Text") + ": "
                 + (IsLayoutValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"));
 

@@ -5,12 +5,14 @@
 // All rights reserved.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.UI.Core;
 using SensorbergSDK;
 using Windows.UI.Xaml;
+using SensorbergSDK.Internal.Data;
 
 namespace SensorbergShowcase.Model
 {
@@ -26,6 +28,11 @@ namespace SensorbergShowcase.Model
         private bool _shouldRegisterBackgroundTask;
         private bool _isBackgroundTaskRegistered;
         private bool _areActionsEnabled;
+        private List<SensorbergApplication> _applications;
+        private SensorbergApplication _application;
+        private string _apiKey;
+        private bool _showApiKeySelection;
+        private bool _isApiKeyValid;
         public ObservableCollection<string> ResolvedActions { get; } = new ObservableCollection<string>();
 
         public bool IsBigScreen
@@ -136,6 +143,60 @@ namespace SensorbergShowcase.Model
             set
             {
                 _areActionsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<SensorbergApplication> Applications
+        {
+            get { return _applications; }
+            set
+            {
+                _applications = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public SensorbergApplication Application
+        {
+            get { return _application; }
+            set
+            {
+                _application = value;
+                OnPropertyChanged();
+                if (_application != null)
+                {
+                    ApiKey = _application.AppKey;
+                }
+            }
+        }
+
+        public string ApiKey
+        {
+            get { return _apiKey; }
+            set
+            {
+                _apiKey = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShowApiKeySelection
+        {
+            get { return _showApiKeySelection; }
+            set
+            {
+                _showApiKeySelection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsApiKeyValid
+        {
+            get { return _isApiKeyValid; }
+            set
+            {
+                _isApiKeyValid = value;
                 OnPropertyChanged();
             }
         }

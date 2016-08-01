@@ -4,6 +4,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
+using SensorbergSDK.Internal.Data;
+using SensorbergShowcase.Controls;
 
 namespace SensorbergShowcase.Pages
 {
@@ -27,21 +30,6 @@ namespace SensorbergShowcase.Pages
         private bool _apiKeyWasJustSuccessfullyFetchedOrReset = false;
 
         #region Properties (API key, email, password, background task status etc.)
-
-        public string ApiKey
-        {
-            get
-            {
-                return (string)GetValue(ApiKeyProperty);
-            }
-            private set
-            {
-                SetValue(ApiKeyProperty, value);
-            }
-        }
-        public static readonly DependencyProperty ApiKeyProperty =
-            DependencyProperty.Register("ApiKey", typeof(string), typeof(MainPage),
-                new PropertyMetadata(SDKManager.DemoApiKey));
 
         public string Email
         {
@@ -72,27 +60,6 @@ namespace SensorbergShowcase.Pages
         public static readonly DependencyProperty PasswordProperty =
             DependencyProperty.Register("Password", typeof(string), typeof(MainPage),
                 new PropertyMetadata(string.Empty));
-
-
-        public bool IsApiKeyValid
-        {
-            get
-            {
-                return (bool)GetValue(IsApiKeyValidProperty);
-            }
-            private set
-            {
-                SetValue(IsApiKeyValidProperty, value);
-
-                if (value)
-                {
-                    TryToReinitializeSDK();
-                }
-            }
-        }
-        public static readonly DependencyProperty IsApiKeyValidProperty =
-            DependencyProperty.Register("IsApiKeyValid", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
 
         public bool IsValidatingOrFetchingApiKey
         {
@@ -133,11 +100,11 @@ namespace SensorbergShowcase.Pages
 
             if (_localSettings.Values.ContainsKey(KeyApiKey))
             {
-                ApiKey = _localSettings.Values[KeyApiKey].ToString();
+                Model.ApiKey = _localSettings.Values[KeyApiKey].ToString();
             }
             else
             {
-                ApiKey = SDKManager.DemoApiKey;
+                Model.ApiKey = SDKManager.DemoApiKey;
             }
 
             if (_localSettings.Values.ContainsKey(KeyEmail))
@@ -194,7 +161,7 @@ namespace SensorbergShowcase.Pages
 
             if (string.IsNullOrEmpty(key) || key.Equals(KeyApiKey))
             {
-                _localSettings.Values[KeyApiKey] = ApiKey;
+                _localSettings.Values[KeyApiKey] = Model.ApiKey;
                 _localSettings.Values[KeyEmail] = Email;
                 _localSettings.Values[KeyPassword] = Password;
             }
@@ -219,7 +186,7 @@ namespace SensorbergShowcase.Pages
                 {
                     ManufacturerId = ManufacturerId,
                     BeaconCode = BeaconCode,
-                    ApiKey = ApiKey,
+                    ApiKey = Model.ApiKey,
                     BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
                     BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
                 });
@@ -241,15 +208,15 @@ namespace SensorbergShowcase.Pages
         {
             IsValidatingOrFetchingApiKey = true;
 
-            ApiKeyValidationResult result = await _apiKeyHelper.ValidateApiKey(ApiKey);
+            ApiKeyValidationResult result = await _apiKeyHelper.ValidateApiKey(Model.ApiKey);
 
             if (result == ApiKeyValidationResult.Valid)
             {
-                IsApiKeyValid = true;
+                Model.IsApiKeyValid = true;
             }
             else
             {
-                IsApiKeyValid = false;
+                Model.IsApiKeyValid = false;
 
                 if (displayResultDialogInCaseOfFailure)
                 {
@@ -289,9 +256,17 @@ namespace SensorbergShowcase.Pages
                 if (result == NetworkResult.Success)
                 {
                     _apiKeyWasJustSuccessfullyFetchedOrReset = true;
-                    ApiKey = _apiKeyHelper.ApiKey;
-                    IsApiKeyValid = true;
-                    SaveApplicationSettings();
+                    Model.Applications = _apiKeyHelper.Applications;
+                    if (_apiKeyHelper.Applications?.Count > 1)
+                    {
+                        Model.ShowApiKeySelection = _apiKeyHelper.Applications.Count > 1;
+                    }
+                    else
+                    {
+                        Model.ApiKey = _apiKeyHelper.ApiKey;
+                        Model.IsApiKeyValid = true;
+                        SaveApplicationSettings();
+                    }
                 }
                 else
                 {
@@ -323,8 +298,8 @@ namespace SensorbergShowcase.Pages
         private void OnResetToDemoApiKeyButtonClicked(object sender, RoutedEventArgs e)
         {
             _apiKeyWasJustSuccessfullyFetchedOrReset = true;
-            ApiKey = SDKManager.DemoApiKey;
-            IsApiKeyValid = true;
+            Model.ApiKey = SDKManager.DemoApiKey;
+            Model.IsApiKeyValid = true;
         }
 
         private void OnScanApiQrCodeButtonClicked(object sender, RoutedEventArgs e)
@@ -380,7 +355,7 @@ namespace SensorbergShowcase.Pages
 
                 if (textBoxName.StartsWith("apikey"))
                 {
-                    ApiKey = text;
+                    Model.ApiKey = text;
 
                     if (_apiKeyWasJustSuccessfullyFetchedOrReset)
                     {
@@ -388,7 +363,7 @@ namespace SensorbergShowcase.Pages
                     }
                     else
                     {
-                        IsApiKeyValid = false;
+                        Model.IsApiKeyValid = false;
                     }
 
                     await _sdkManager.InvalidateCacheAsync();
@@ -409,6 +384,11 @@ namespace SensorbergShowcase.Pages
                 Password = (sender as PasswordBox).Password;
                 SaveApplicationSettings(KeyApiKey);
             }
+        }
+
+        private void AppCombobox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ValidateApiKeyAsync();
         }
     }
 }
