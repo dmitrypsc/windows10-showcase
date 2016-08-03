@@ -178,7 +178,6 @@ namespace SensorbergShowcase.Model
             {
                 _apiKey = value;
                 OnPropertyChanged();
-                ShouldRegisterBackgroundTask = false;
             }
         }
 

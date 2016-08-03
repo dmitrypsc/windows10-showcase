@@ -1,1 +1,1 @@
-D:\work\sensorberg\windows10-showcase\SensorbergShowcase\AppPackages\SensorbergShowcase_1.1.7.0\SensorbergShowcase_1.1.7.0_x86_x64_arm.appxbundle
+D:\work\sensorberg\windows10-showcase\SensorbergShowcase\AppPackages\SensorbergShowcase_1.1.10.0\SensorbergShowcase_1.1.10.0_x86_x64_arm.appxbundle
