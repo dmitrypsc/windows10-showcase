@@ -6,6 +6,8 @@ using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using MetroLog;
+using Microsoft.HockeyApp;
 using SensorbergShowcase.Pages;
 
 namespace SensorbergShowcase
@@ -16,6 +18,7 @@ namespace SensorbergShowcase
     sealed partial class App : Application
     {
         private static ResourceLoader _resourceLoader;
+
         /// <summary>
         /// Resource loader for app-wide localization needs.
         /// </summary>
@@ -40,6 +43,8 @@ namespace SensorbergShowcase
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            LogManagerFactory.DefaultConfiguration.IsEnabled = false;
+            HockeyClient.Current.Configure("d98620a9d3984f349f8685a25a3cfae1");
         }
 
         /// <summary>

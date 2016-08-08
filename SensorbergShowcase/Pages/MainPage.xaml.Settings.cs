@@ -3,7 +3,12 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
+using SensorbergSDK.Internal.Data;
+using SensorbergSDK.Internal.Services;
+using SensorbergShowcase.Controls;
 
 namespace SensorbergShowcase.Pages
 {
@@ -20,28 +25,13 @@ namespace SensorbergShowcase.Pages
         private const string KeyBeaconId1 = "beacon_id_1";
         private const string KeyBeaconId2 = "beacon_id_2";
         private const string KeyBeaconId3 = "beacon_id_3";
+        private const string KeyEnableBackgroundTask = "enable_backgroundtask";
 
         private ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
         private ApiKeyHelper _apiKeyHelper = new ApiKeyHelper();
-        private bool _enableActionsSwitchToggledByUser = true;
         private bool _apiKeyWasJustSuccessfullyFetchedOrReset = false;
 
         #region Properties (API key, email, password, background task status etc.)
-
-        public string ApiKey
-        {
-            get
-            {
-                return (string)GetValue(ApiKeyProperty);
-            }
-            private set
-            {
-                SetValue(ApiKeyProperty, value);
-            }
-        }
-        public static readonly DependencyProperty ApiKeyProperty =
-            DependencyProperty.Register("ApiKey", typeof(string), typeof(MainPage),
-                new PropertyMetadata(SDKManager.DemoApiKey));
 
         public string Email
         {
@@ -73,41 +63,6 @@ namespace SensorbergShowcase.Pages
             DependencyProperty.Register("Password", typeof(string), typeof(MainPage),
                 new PropertyMetadata(string.Empty));
 
-        public bool AreActionsEnabled
-        {
-            get
-            {
-                return (bool)GetValue(AreActionsEnabledProperty);
-            }
-            private set
-            {
-                SetValue(AreActionsEnabledProperty, value);
-            }
-        }
-        public static readonly DependencyProperty AreActionsEnabledProperty =
-            DependencyProperty.Register("AreActionsEnabled", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
-
-        public bool IsApiKeyValid
-        {
-            get
-            {
-                return (bool)GetValue(IsApiKeyValidProperty);
-            }
-            private set
-            {
-                SetValue(IsApiKeyValidProperty, value);
-
-                if (value && ShouldActionsBeEnabled)
-                {
-                    TryToReinitializeSDK();
-                }
-            }
-        }
-        public static readonly DependencyProperty IsApiKeyValidProperty =
-            DependencyProperty.Register("IsApiKeyValid", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
-
         public bool IsValidatingOrFetchingApiKey
         {
             get
@@ -135,43 +90,23 @@ namespace SensorbergShowcase.Pages
             DependencyProperty.Register("IsScannerAvailable", typeof(bool), typeof(MainPage),
                 new PropertyMetadata(true));
 
-        public bool IsBackgroundTaskRegistered
-        {
-            get
-            {
-                return (bool)GetValue(IsBackgroundTaskRegisteredProperty);
-            }
-            private set
-            {
-                SetValue(IsBackgroundTaskRegisteredProperty, value);
-            }
-        }
-        public static readonly DependencyProperty IsBackgroundTaskRegisteredProperty =
-            DependencyProperty.Register("IsBackgroundTaskRegistered", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
-
-        private bool ShouldActionsBeEnabled
-        {
-            get;
-            set;
-        }
-
         #endregion
 
         private void LoadApplicationSettings()
         {
+            Logger.Debug("LoadApplicationSettings");
             if (_localSettings.Values.ContainsKey(KeyEnableActions))
             {
-                ShouldActionsBeEnabled = (bool)_localSettings.Values[KeyEnableActions];
+                Model.AreActionsEnabled = (bool)_localSettings.Values[KeyEnableActions];
             }
 
             if (_localSettings.Values.ContainsKey(KeyApiKey))
             {
-                ApiKey = _localSettings.Values[KeyApiKey].ToString();
+                Model.ApiKey = _localSettings.Values[KeyApiKey].ToString();
             }
             else
             {
-                ApiKey = SDKManager.DemoApiKey;
+                Model.ApiKey = SDKManager.DemoApiKey;
             }
 
             if (_localSettings.Values.ContainsKey(KeyEmail))
@@ -199,13 +134,12 @@ namespace SensorbergShowcase.Pages
                 BeaconId3 = _localSettings.Values[KeyBeaconId3].ToString();
             }
 
-            if (AreActionsEnabled != ShouldActionsBeEnabled)
+            if (_localSettings.Values.ContainsKey(KeyEnableBackgroundTask))
             {
-                _enableActionsSwitchToggledByUser = false;
-                AreActionsEnabled = ShouldActionsBeEnabled;
+                Model.ShouldRegisterBackgroundTask = (bool)_localSettings.Values[KeyEnableBackgroundTask];
             }
 
-            IsBackgroundTaskRegistered = _sdkManager.IsBackgroundTaskRegistered;
+            Model.IsBackgroundTaskRegistered = _sdkManager.IsBackgroundTaskRegistered;
         }
 
         /// <summary>
@@ -215,14 +149,21 @@ namespace SensorbergShowcase.Pages
         /// specific settings related to the given key.</param>
         private void SaveApplicationSettings(string key = null)
         {
+            Logger.Debug("SaveApplicationSettings Key={0}", key);
             if (string.IsNullOrEmpty(key) || key.Equals(KeyEnableActions))
             {
-                _localSettings.Values[KeyEnableActions] = ShouldActionsBeEnabled;
+                _localSettings.Values[KeyEnableActions] = Model.AreActionsEnabled;
             }
+
+            if (string.IsNullOrEmpty(key) || key.Equals(KeyEnableBackgroundTask))
+            {
+                _localSettings.Values[KeyEnableBackgroundTask] = Model.ShouldRegisterBackgroundTask;
+            }
+
 
             if (string.IsNullOrEmpty(key) || key.Equals(KeyApiKey))
             {
-                _localSettings.Values[KeyApiKey] = ApiKey;
+                _localSettings.Values[KeyApiKey] = Model.ApiKey;
                 _localSettings.Values[KeyEmail] = Email;
                 _localSettings.Values[KeyPassword] = Password;
             }
@@ -237,48 +178,51 @@ namespace SensorbergShowcase.Pages
 
         private async Task TryToReinitializeSDK()
         {
+            Logger.Debug("TryToReinitializeSDK {0}", _sdkManager != null);
             if (_sdkManager != null)
             {
                 _sdkManager.Deinitialize(false);
-                await
-                    _sdkManager.InitializeAsync(new SdkConfiguration()
-                    {
-                        ManufacturerId = ManufacturerId,
-                        BeaconCode = BeaconCode,
-                        ApiKey = ApiKey,
-                        BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
-                        BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
-                    });
-                SetResolverSpecificEvents(true);
-            }
+                SdkConfiguration sdkConfiguration = new SdkConfiguration()
+                {
+                    ManufacturerId = ManufacturerId,
+                    BeaconCode = BeaconCode,
+                    ApiKey = Model.ApiKey,
+                    BackgroundAdvertisementClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask",
+                    BackgroundTimerClassName = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask"
+                };
 
-            if (!AreActionsEnabled)
-            {
-                _enableActionsSwitchToggledByUser = false;
-                AreActionsEnabled = true;
+                if (ServiceManager.LayoutManager.Layout != null)
+                {
+                    IList<string> ids = ServiceManager.LayoutManager.Layout.AccountBeaconId1S;
+                    if (ids.Count > 0)
+                    {
+                        sdkConfiguration.BackgroundBeaconUuidSpace = ids[0];
+                    }
+                }
+                await _sdkManager.InitializeAsync(sdkConfiguration);
+                _sdkManager.StartScanner();
             }
         }
 
         /// <summary>
         /// Validates the given API key.
         /// </summary>
-        /// <param name="apiKey">The API key to validate.</param>
         /// <param name="displayResultDialogInCaseOfFailure">If true, will display a result dialog in case of an error.</param>
         /// <returns>The API key validation result.</returns>
-        private async Task<ApiKeyValidationResult> ValidateApiKeyAsync(
-            string apiKey, bool displayResultDialogInCaseOfFailure = false)
+        private async Task<ApiKeyValidationResult> ValidateApiKeyAsync(bool displayResultDialogInCaseOfFailure = false)
         {
             IsValidatingOrFetchingApiKey = true;
 
-            ApiKeyValidationResult result = await _apiKeyHelper.ValidateApiKey(ApiKey);
+            ApiKeyValidationResult result = await _apiKeyHelper.ValidateApiKey(Model.ApiKey);
 
             if (result == ApiKeyValidationResult.Valid)
             {
-                IsApiKeyValid = true;
+                Model.IsApiKeyValid = true;
+                await TryToReinitializeSDK();
             }
             else
             {
-                IsApiKeyValid = false;
+                Model.IsApiKeyValid = false;
 
                 if (displayResultDialogInCaseOfFailure)
                 {
@@ -302,9 +246,9 @@ namespace SensorbergShowcase.Pages
             return result;
         }
 
-        private void OnValidateApiKeyButtonClicked(object sender, RoutedEventArgs e)
+        private async void OnValidateApiKeyButtonClicked(object sender, RoutedEventArgs e)
         {
-            ValidateApiKeyAsync(ApiKey, true);
+            await ValidateApiKeyAsync(true);
         }
 
         private async void OnFetchApiKeyButtonClickedAsync(object sender, RoutedEventArgs e)
@@ -318,9 +262,17 @@ namespace SensorbergShowcase.Pages
                 if (result == NetworkResult.Success)
                 {
                     _apiKeyWasJustSuccessfullyFetchedOrReset = true;
-                    ApiKey = _apiKeyHelper.ApiKey;
-                    IsApiKeyValid = true;
-                    SaveApplicationSettings();
+                    Model.Applications = _apiKeyHelper.Applications;
+                    if (_apiKeyHelper.Applications?.Count > 1)
+                    {
+                        Model.ShowApiKeySelection = _apiKeyHelper.Applications.Count > 1;
+                    }
+                    else
+                    {
+                        Model.ApiKey = _apiKeyHelper.ApiKey;
+                        Model.IsApiKeyValid = true;
+                        SaveApplicationSettings();
+                    }
                 }
                 else
                 {
@@ -352,8 +304,8 @@ namespace SensorbergShowcase.Pages
         private void OnResetToDemoApiKeyButtonClicked(object sender, RoutedEventArgs e)
         {
             _apiKeyWasJustSuccessfullyFetchedOrReset = true;
-            ApiKey = SDKManager.DemoApiKey;
-            IsApiKeyValid = true;
+            Model.ApiKey = SDKManager.DemoApiKey;
+            Model.IsApiKeyValid = true;
         }
 
         private void OnScanApiQrCodeButtonClicked(object sender, RoutedEventArgs e)
@@ -361,32 +313,9 @@ namespace SensorbergShowcase.Pages
             Frame.Navigate(typeof(QrCodeScannerPage));
         }
 
-        private async void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
+        private void OnEnableActionsSwitchToggled(object sender, RoutedEventArgs e)
         {
-            if (sender is ToggleSwitch)
-            {
-                ToggleSwitch enableActionsSwitch = sender as ToggleSwitch;
-
-                if (enableActionsSwitch.IsOn)
-                {
-                    await TryToReinitializeSDK();
-                }
-                else
-                {
-                    SetResolverSpecificEvents(false);
-                    _sdkManager.Deinitialize(false);
-                }
-
-                if (_enableActionsSwitchToggledByUser)
-                {
-                    ShouldActionsBeEnabled = enableActionsSwitch.IsOn;
-                    SaveApplicationSettings(KeyEnableActions);
-                }
-                else
-                {
-                    _enableActionsSwitchToggledByUser = true;
-                }
-            }
+            SaveApplicationSettings(KeyEnableActions);
         }
 
         private async void OnEnableBackgroundTaskSwitchToggledAsync(object sender, RoutedEventArgs e)
@@ -396,6 +325,14 @@ namespace SensorbergShowcase.Pages
                 if (string.IsNullOrEmpty(_sdkManager.Configuration.ApiKey))
                 {
                     _sdkManager.Configuration.ApiKey = SDKManager.DemoApiKey;
+                }
+                if (ServiceManager.LayoutManager.Layout != null)
+                {
+                    IList<string> ids = ServiceManager.LayoutManager.Layout.AccountBeaconId1S;
+                    if (ids.Count > 0)
+                    {
+                        _sdkManager.Configuration.BackgroundBeaconUuidSpace = ids[0];
+                    }
                 }
 
                 BackgroundTaskRegistrationResult result = await _sdkManager.RegisterBackgroundTaskAsync();
@@ -411,16 +348,16 @@ namespace SensorbergShowcase.Pages
 
                     (sender as ToggleSwitch).IsOn = false;
 
-                    ShowInformationalMessageDialogAsync(
-                        exceptionMessage, App.ResourceLoader.GetString("failedToRegisterBackgroundTask/Text"));
+                    ShowInformationalMessageDialogAsync(exceptionMessage, App.ResourceLoader.GetString("failedToRegisterBackgroundTask/Text"));
                 }
             }
             else
             {
                 _sdkManager.UnregisterBackgroundTask();
             }
+            SaveApplicationSettings(KeyEnableBackgroundTask);
 
-            IsBackgroundTaskRegistered = _sdkManager.IsBackgroundTaskRegistered;
+            Model.IsBackgroundTaskRegistered = _sdkManager.IsBackgroundTaskRegistered;
         }
 
         private async void OnSettingsTextBoxTextChanged(object sender, TextChangedEventArgs e)
@@ -432,7 +369,7 @@ namespace SensorbergShowcase.Pages
 
                 if (textBoxName.StartsWith("apikey"))
                 {
-                    ApiKey = text;
+                    Model.ApiKey = text;
 
                     if (_apiKeyWasJustSuccessfullyFetchedOrReset)
                     {
@@ -440,10 +377,15 @@ namespace SensorbergShowcase.Pages
                     }
                     else
                     {
-                        IsApiKeyValid = false;
+                        Model.IsApiKeyValid = false;
                     }
 
                     await _sdkManager.InvalidateCacheAsync();
+
+                    if (Model.ApiKey.Length > 25)
+                    {
+                        await ValidateApiKeyAsync();
+                    }
                 }
                 else if (textBoxName.StartsWith("email"))
                 {

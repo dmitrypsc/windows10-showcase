@@ -1,9 +1,11 @@
 ﻿using SensorbergSDK;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using SensorbergSDK.Internal.Services;
 
 namespace SensorbergShowcase.Pages
 {
@@ -35,33 +37,22 @@ namespace SensorbergShowcase.Pages
             DependencyProperty.Register("IsLayoutValid", typeof(bool), typeof(MainPage),
                 new PropertyMetadata(false));
 
-        /// <summary>
-        /// Hooks/unhooks the resolver specific events. If already hooked/unhooked, does nothing.
-        /// </summary>
-        /// <param name="hook">If true, will hook the events. If false, will unhook.</param>
-        private void SetResolverSpecificEvents(bool hook)
-        {
-            if (HaveResolverSpecificEventsBeenHooked != hook)
-            {
-                Debug.WriteLine("MainPage.SetResolverSpecificEvents: " + HaveResolverSpecificEventsBeenHooked + " -> " + hook);
-
-                if (hook)
-                {
-                    _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
-                    _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
-                }
-                else
-                {
-                    _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
-                    _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
-                }
-
-                HaveResolverSpecificEventsBeenHooked = hook;
-            }
-        }
 
         private async void OnBeaconLayoutValidityChangedAsync(object sender, bool e)
         {
+            if (Model.ShouldRegisterBackgroundTask && e)
+            {
+                if (ServiceManager.LayoutManager.Layout != null)
+                {
+                    IList<string> ids = ServiceManager.LayoutManager.Layout.AccountBeaconId1S;
+                    if (ids.Count > 0)
+                    {
+                        _sdkManager.Configuration.BackgroundBeaconUuidSpace = ids[0];
+                    }
+                }
+
+                await _sdkManager.RegisterBackgroundTaskAsync();
+            }
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 IsLayoutValid = e;
@@ -75,63 +66,12 @@ namespace SensorbergShowcase.Pages
         /// <param name="e"></param>
         private async void OnBeaconActionResolvedAsync(object sender, BeaconAction e)
         {
-            if (_messageDialogIsOpen)
+            Logger.Debug("OnBeaconActionResolvedAsync (enabled {0}) Action {1}", Model.AreActionsEnabled, e);
+            if (!Model.AreActionsEnabled)
             {
                 return;
             }
-
-            MessageDialog messageDialog = e.ToMessageDialog();
-
-            switch (e.Type)
-            {
-                case BeaconActionType.UrlMessage:
-                case BeaconActionType.VisitWebsite:
-                    messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("yes/Text"),
-                        new UICommandInvokedHandler(async (command) =>
-                        {
-                            await Windows.System.Launcher.LaunchUriAsync(new Uri(e.Url));
-                        })));
-
-                    messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("no/Text")));
-
-
-                    Debug.WriteLine("MainPage.OnBeaconActionResolvedAsync: Message dialog is open");
-                    _messageDialogIsOpen = true;
-
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        try
-                        {
-                            await messageDialog.ShowAsync();
-                        }
-                        catch
-                        {
-                            // For showing more than one message dialog at one time.
-                        }
-                    });
-
-                    Debug.WriteLine("MainPage.OnBeaconActionResolvedAsync: Message dialog is closed");
-                    _messageDialogIsOpen = false;
-                    break;
-
-                case BeaconActionType.InApp:
-                    _messageDialogIsOpen = true;
-
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        try
-                        {
-                            await messageDialog.ShowAsync();
-                        }
-                        catch
-                        {
-                            // For showing more than one message dialog at one time.
-                        }
-                    });
-
-                    _messageDialogIsOpen = false;
-                    break;
-            }
+            Model.ActionResolved(e);
         }
 
         /// <summary>

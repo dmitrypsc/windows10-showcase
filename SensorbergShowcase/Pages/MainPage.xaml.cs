@@ -1,10 +1,22 @@
 ﻿using SensorbergSDK;
 using SensorbergShowcase.Utils;
 using System;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Email;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using MetroLog;
+using SensorbergShowcase.Model;
 
 namespace SensorbergShowcase.Pages
 {
@@ -18,28 +30,17 @@ namespace SensorbergShowcase.Pages
         /*
          * Insert the manufacturer ID and beacon code for filtering beacons below.
          */
-        private const UInt16 ManufacturerId = 0x004c;
-        private const UInt16 BeaconCode = 0x0215;
+        private const ushort ManufacturerId = 0x004c;
+        private const ushort BeaconCode = 0x0215;
 
+        private static readonly ILogger Logger = LogManagerFactory.DefaultLogManager.GetLogger<MainPage>();
         private const int SettingsPivotIndex = 2;
 
         private SDKManager _sdkManager;
         private bool _appIsOnForeground;
+        public MainPageModel Model { get; } = new MainPageModel();
+        public ICommand SendLogsCommand { get; } = new SendLogsCommand();
 
-        public bool IsBigScreen
-        {
-            get
-            {
-                return (bool)GetValue(IsBigScreenProperty);
-            }
-            private set
-            {
-                SetValue(IsBigScreenProperty, value);
-            }
-        }
-        public static readonly DependencyProperty IsBigScreenProperty =
-            DependencyProperty.Register("IsBigScreen", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
 
         /// <summary>
         /// Constructor
@@ -50,7 +51,7 @@ namespace SensorbergShowcase.Pages
 
             double displaySize = DeviceUtils.ResolveDisplaySizeInInches();
             System.Diagnostics.Debug.WriteLine("Display size is " + displaySize + " inches");
-            IsBigScreen = displaySize > 6d ? true : false;
+            Model.IsBigScreen = displaySize > 6d ? true : false;
 
             hub.Background.Opacity = 0.6d;
             pivot.Background.Opacity = 0.6d;
@@ -58,11 +59,13 @@ namespace SensorbergShowcase.Pages
             SizeChanged += OnMainPageSizeChanged;
 
             MainPageScanner(); // Scanner specific construction
+
+            DataContext = this;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo");
+            Logger.Debug("MainPage.OnNavigatedTo");
             base.OnNavigatedTo(e);
 
             if (_sdkManager == null)
@@ -71,6 +74,8 @@ namespace SensorbergShowcase.Pages
                 _sdkManager.ScannerStatusChanged += OnScannerStatusChangedAsync;
                 _sdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChangedAsync;
                 _sdkManager.BackgroundFiltersUpdated += OnBackgroundFiltersUpdatedAsync;
+                _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
+                _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
                 await TryToReinitializeSDK();
             }
 
@@ -78,22 +83,18 @@ namespace SensorbergShowcase.Pages
 
             if (QrCodeScannerPage.ScannedQrCode != null)
             {
-                System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
-                
+                Logger.Debug("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
+
                 if (pivot.Visibility == Visibility.Visible)
                 {
                     pivot.SelectedIndex = SettingsPivotIndex;
                 }
 
-                if (await ValidateApiKeyAsync(QrCodeScannerPage.ScannedQrCode, true) != ApiKeyValidationResult.Invalid)
-                {
-                    // The key is valid (or we couldn't validate due to network error)
-                    ApiKey = QrCodeScannerPage.ScannedQrCode;
-                    SaveApplicationSettings(KeyApiKey);
-                }
+                Model.ApiKey = QrCodeScannerPage.ScannedQrCode;
+                SaveApplicationSettings(KeyApiKey);
             }
-            
-            ValidateApiKeyAsync(ApiKey); // Do not await
+
+            ValidateApiKeyAsync().ConfigureAwait(false); // Do not await
 
             if (_advertiser == null)
             {
@@ -102,25 +103,24 @@ namespace SensorbergShowcase.Pages
                 _advertiser.BeaconCode = BeaconCode;
             }
 
-            toggleScanButton.IsEnabled = false;
             SetScannerSpecificEvents(true);
-            _sdkManager.StartScanner();
 
             Window.Current.VisibilityChanged += OnVisibilityChanged;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("MainPage.OnNavigatedFrom");
+            Logger.Debug("MainPage.OnNavigatedFrom");
 
             Window.Current.VisibilityChanged -= OnVisibilityChanged;
 
             _sdkManager.ScannerStatusChanged -= OnScannerStatusChangedAsync;
             _sdkManager.LayoutValidityChanged -= OnBeaconLayoutValidityChangedAsync;
             _sdkManager.BackgroundFiltersUpdated -= OnBackgroundFiltersUpdatedAsync;
+            _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
+            _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
 
             SetScannerSpecificEvents(false);
-            SetResolverSpecificEvents(false);
 
             if (_sdkManager.IsScannerStarted)
             {
@@ -171,7 +171,7 @@ namespace SensorbergShowcase.Pages
 
             statusAsContentString +=
                 "\n" + App.ResourceLoader.GetString("apiKey/Text") + ": "
-                + (IsApiKeyValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"))
+                + (Model.IsApiKeyValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"))
                 + "\n" + App.ResourceLoader.GetString("beaconLayout/Text") + ": "
                 + (IsLayoutValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"));
 
@@ -212,16 +212,47 @@ namespace SensorbergShowcase.Pages
 
         private void OnMainPageSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (IsBigScreen)
+            if (Model.IsBigScreen)
             {
-                // No implementation required
+                Model.BeaconDetailsControlWidth = 350d;
             }
             else
             {
                 if (layoutGrid.ActualWidth > 0)
                 {
-                    BeaconDetailsControlWidth = layoutGrid.ActualWidth - 40d;
+                    Model.BeaconDetailsControlWidth = layoutGrid.ActualWidth - 40d;
                 }
+            }
+        }
+    }
+    public class SendLogsCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public async void Execute(object parameter)
+        {
+            var emailMessage = new EmailMessage();
+            emailMessage.Subject = emailMessage.Body = "Logs from " + Package.Current.DisplayName;
+            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+            {
+                Stream s = await LogManagerFactory.DefaultLogManager.GetCompressedLogs();
+                MemoryStream m = new MemoryStream();
+                await s.CopyToAsync(m);
+                byte[] b = m.ToArray();
+                InMemoryRandomAccessStream mem = new InMemoryRandomAccessStream();
+                await mem.WriteAsync(b.AsBuffer());
+
+                emailMessage.Attachments.Add(new EmailAttachment("logs.zip", RandomAccessStreamReference.CreateFromStream(mem)));
+                await EmailManager.ShowComposeNewEmailAsync(emailMessage);
+            }
+            else
+            {
+                await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder);
             }
         }
     }

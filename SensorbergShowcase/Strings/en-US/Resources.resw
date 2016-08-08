@@ -282,4 +282,13 @@
   <data name="yes.Text" xml:space="preserve">
     <value>yes</value>
   </data>
+  <data name="actions.Text" xml:space="preserve">
+    <value>Resolved Actions</value>
+  </data>
+  <data name="bgTaskStatusNotRegistered.Text" xml:space="preserve">
+    <value>Background Task not registered</value>
+  </data>
+  <data name="bgTaskStatusOk.Text" xml:space="preserve">
+    <value>Background Task registered</value>
+  </data>
 </root>

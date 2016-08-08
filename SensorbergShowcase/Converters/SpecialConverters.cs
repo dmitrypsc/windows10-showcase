@@ -1,5 +1,7 @@
 ﻿using System;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SensorbergShowcase.Converters
 {
@@ -88,7 +90,8 @@ namespace SensorbergShowcase.Converters
             if (value is int)
             {
                 int range = (int)value;
-                uri = "ms-appx:///Assets/Graphics/range" + range.ToString() + ".png";
+                uri = "ms-appx:///Assets/Graphics/range" + range + ".png";
+                return new BitmapImage() {UriSource = new Uri(uri, UriKind.RelativeOrAbsolute)};
             }
 
             return uri;
