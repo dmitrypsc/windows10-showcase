@@ -110,7 +110,7 @@ namespace SensorbergShowcase.Pages
                 {
                     if (eventArgs.EventType == BeaconEventType.Exit)
                     {
-                        Model.BeaconModel.Remove(beacon);
+                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => Model.BeaconModel.Remove(beacon));
                     }
                     else
                     {

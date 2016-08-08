@@ -57,22 +57,15 @@ namespace SensorbergShowcase.Model
 
         public async void Remove(Beacon beacon)
         {
-            bool found = false;
             int index = 0;
 
             for (index = 0; index < BeaconDetailsCollection.Count; ++index)
             {
                 if (BeaconDetailsCollection[index].Matches(beacon))
                 {
-                    found = true;
+                    BeaconDetailsCollection.RemoveAt(index);
                     break;
                 }
-            }
-
-            if (found)
-            {
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
-                    BeaconDetailsCollection.RemoveAt(index));
             }
         }
 
