@@ -34,7 +34,7 @@
                     ItemsSource="{Binding Model.BeaconModel.BeaconDetailsCollection, ElementName=thisPage, Mode=OneWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate >
-                            <controls:BeaconDetailsControl Width="{Binding Model.BeaconDetailsControlWidth, ElementName=thisPage, Mode=OneWay}" />
+                            <controls:BeaconDetailsControl Width="{Binding Model.BeaconDetailsControlWidth, ElementName=thisPage, Mode=OneWay}" BeaconDetail="{Binding}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -361,7 +361,10 @@
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
-        </DataTemplate>        
+        </DataTemplate>
+        <DataTemplate x:Key="ActionItemTemplate">
+            <TextBlock Text="{Binding}" Margin="5"/>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid x:Name="layoutGrid">
@@ -418,7 +421,7 @@
                 <HubSection.ContentTemplate>
                     <DataTemplate>
                         <Grid>
-                            <ListView ItemsSource="{Binding Model.ResolvedActions}" />
+                            <ListView ItemsSource="{Binding Model.ResolvedActions}" ItemTemplate="{StaticResource ActionItemTemplate}"/>
                         </Grid>
                     </DataTemplate>
                 </HubSection.ContentTemplate>
@@ -489,6 +492,10 @@
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
+
+
+
+
 
 
 

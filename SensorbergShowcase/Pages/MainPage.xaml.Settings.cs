@@ -182,8 +182,6 @@ namespace SensorbergShowcase.Pages
             if (_sdkManager != null)
             {
                 _sdkManager.Deinitialize(false);
-                _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
-                _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
                 SdkConfiguration sdkConfiguration = new SdkConfiguration()
                 {
                     ManufacturerId = ManufacturerId,
@@ -203,10 +201,6 @@ namespace SensorbergShowcase.Pages
                 }
                 await _sdkManager.InitializeAsync(sdkConfiguration);
                 _sdkManager.StartScanner();
-
-
-                _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
-                _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
             }
         }
 

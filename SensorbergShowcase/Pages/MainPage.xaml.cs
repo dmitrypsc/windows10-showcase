@@ -74,6 +74,8 @@ namespace SensorbergShowcase.Pages
                 _sdkManager.ScannerStatusChanged += OnScannerStatusChangedAsync;
                 _sdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChangedAsync;
                 _sdkManager.BackgroundFiltersUpdated += OnBackgroundFiltersUpdatedAsync;
+                _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
+                _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
                 await TryToReinitializeSDK();
             }
 
@@ -115,6 +117,8 @@ namespace SensorbergShowcase.Pages
             _sdkManager.ScannerStatusChanged -= OnScannerStatusChangedAsync;
             _sdkManager.LayoutValidityChanged -= OnBeaconLayoutValidityChangedAsync;
             _sdkManager.BackgroundFiltersUpdated -= OnBackgroundFiltersUpdatedAsync;
+            _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
+            _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
 
             SetScannerSpecificEvents(false);
 

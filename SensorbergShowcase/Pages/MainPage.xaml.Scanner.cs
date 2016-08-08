@@ -95,55 +95,46 @@ namespace SensorbergShowcase.Pages
 
         private async void OnBeaconEventAsync(object sender, BeaconEventArgs eventArgs)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            try
             {
-                try
+                Beacon beacon = eventArgs.Beacon;
+
+                if (eventArgs.EventType != BeaconEventType.None)
                 {
-                    Beacon beacon = eventArgs.Beacon;
+                    Logger.Debug("MainPage.OnBeaconEventAsync: '" + eventArgs.EventType + "' event from " + beacon);
+                }
 
-                    if (eventArgs.EventType != BeaconEventType.None)
+                bool isExistingBeacon = false;
+
+                if (Model.BeaconModel.Contains(beacon))
+                {
+                    if (eventArgs.EventType == BeaconEventType.Exit)
                     {
-                        Logger.Debug("MainPage.OnBeaconEventAsync: '" + eventArgs.EventType + "' event from " + beacon);
-                    }
-
-                    bool isExistingBeacon = false;
-
-                    if (Model.BeaconModel.Contains(beacon))
-                    {
-                        if (eventArgs.EventType == BeaconEventType.Exit)
-                        {
-                            Model.BeaconModel.Remove(beacon);
-                        }
-                        else 
-                        {
-                            Model.BeaconModel.AddOrReplace(beacon);
-                        }
-
-                        Model.BeaconModel.SortBeaconsBasedOnDistance();
-                        isExistingBeacon = true;
-                    }
-
-
-                    if (!isExistingBeacon)
-                    {
-                        Model.BeaconModel.AddOrReplace(beacon);
-                        Model.BeaconModel.SortBeaconsBasedOnDistance();
-                    }
-
-                    if (Model.BeaconModel.Count() > 0)
-                    {
-                        Model.BeaconsInRange = true;
+                        Model.BeaconModel.Remove(beacon);
                     }
                     else
                     {
-                        Model.BeaconsInRange = false;
+                        Model.BeaconModel.AddOrReplace(beacon);
                     }
+
+//                        Model.BeaconModel.SortBeaconsBasedOnDistance();
+                    isExistingBeacon = true;
                 }
-                catch (Exception e)
+
+
+                if (!isExistingBeacon)
                 {
-                    Logger.Error("Error while add/update beacon", e);
+                    Model.BeaconModel.AddOrReplace(beacon);
+//                        Model.BeaconModel.SortBeaconsBasedOnDistance();
                 }
-            });
+
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
+                    Model.BeaconsInRange = Model.BeaconModel.Count() > 0);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error while add/update beacon", e);
+            }
         }
 
         private async void OnBeaconNotSeenForAWhileAsync(object sender, Beacon e)
