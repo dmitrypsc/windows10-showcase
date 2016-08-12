@@ -3,6 +3,7 @@
     "HockeySDK.UWP": "4.1.3",
     "MetroLog": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "SensorbergSDK": "1.0.83-beta",
     "ZXing.Net": "0.14.0.1"
   },
   "frameworks": {
