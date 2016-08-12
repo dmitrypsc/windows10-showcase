@@ -114,11 +114,11 @@ namespace SensorbergShowcase.Pages
 
             Window.Current.VisibilityChanged -= OnVisibilityChanged;
 
-            _sdkManager.ScannerStatusChanged -= OnScannerStatusChangedAsync;
-            _sdkManager.LayoutValidityChanged -= OnBeaconLayoutValidityChangedAsync;
-            _sdkManager.BackgroundFiltersUpdated -= OnBackgroundFiltersUpdatedAsync;
-            _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
-            _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
+//            _sdkManager.ScannerStatusChanged -= OnScannerStatusChangedAsync;
+//            _sdkManager.LayoutValidityChanged -= OnBeaconLayoutValidityChangedAsync;
+//            _sdkManager.BackgroundFiltersUpdated -= OnBackgroundFiltersUpdatedAsync;
+//            _sdkManager.BeaconActionResolved -= OnBeaconActionResolvedAsync;
+//            _sdkManager.FailedToResolveBeaconAction -= OnFailedToResolveBeaconAction;
 
             SetScannerSpecificEvents(false);
 
