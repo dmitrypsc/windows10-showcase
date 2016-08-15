@@ -21,7 +21,7 @@ namespace SensorbergShowcase.Pages
 
         #region Properties
 
-        public string BeaconId1
+        /*public string BeaconId1
         {
             get
             {
@@ -65,6 +65,7 @@ namespace SensorbergShowcase.Pages
         public static readonly DependencyProperty BeaconId3Property =
             DependencyProperty.Register("BeaconId3", typeof(string), typeof(MainPage),
                 new PropertyMetadata(DefaultBeaconId3));
+                */
 
         public bool IsAdvertisingStarted
         {
@@ -92,17 +93,17 @@ namespace SensorbergShowcase.Pages
         {
             bool valid = false;
 
-            if (!string.IsNullOrEmpty(BeaconId1))
+            if (!string.IsNullOrEmpty(Model.BeaconId1))
             {
-                string beaconId1WithoutDashes = string.Join("", BeaconId1.Split(HexStringSeparator));
+                string beaconId1WithoutDashes = string.Join("", Model.BeaconId1.Split(HexStringSeparator));
                 bool isValidHex = System.Text.RegularExpressions.Regex.IsMatch(beaconId1WithoutDashes, @"\A\b[0-9a-fA-F]+\b\Z");
 
                 if (isValidHex && beaconId1WithoutDashes.Length == BeaconId1LengthWithoutDashes)
                 {
                     try
                     {
-                        int.Parse(BeaconId2);
-                        int.Parse(BeaconId3);
+                        int.Parse(Model.BeaconId2);
+                        int.Parse(Model.BeaconId3);
                         valid = true;
                     }
                     catch (Exception)
@@ -126,17 +127,17 @@ namespace SensorbergShowcase.Pages
                 {
                     if (ValuesForAdvertisementAreValid())
                     {
-                        _advertiser.BeaconId1 = BeaconId1;
+                        _advertiser.BeaconId1 = Model.BeaconId1;
 
                         try
                         {
-                            int id2 = int.Parse(BeaconId2);
+                            int id2 = int.Parse(Model.BeaconId2);
                             if (id2 > ushort.MaxValue)
                             {
                                 ShowInformationalMessageDialogAsync("The major id is to long, it should be between 0 and "+ ushort.MaxValue);
                                 return;
                             }
-                            int id3 = int.Parse(BeaconId3);
+                            int id3 = int.Parse(Model.BeaconId3);
                             if (id3 > ushort.MaxValue)
                             {
                                 ShowInformationalMessageDialogAsync("The minor id is to long, it should be between 0 and " + ushort.MaxValue);
@@ -170,32 +171,32 @@ namespace SensorbergShowcase.Pages
         {
             if (sender is TextBox)
             {
-                TextBox textBox = sender as TextBox;
-                string textBoxName = textBox.Name.ToLower();
-                string text = textBox.Text;
-
-                if (textBoxName.StartsWith("beaconid1"))
-                {
-                    int oldTextLength = text.Length;
-                    int oldCaretPosition = textBox.SelectionStart;
-
-                    BeaconId1 = BeaconFactory.FormatUuid(text);
-
-                    int newCaretPosition = oldCaretPosition + (BeaconId1.Length - oldTextLength);
-
-                    if (newCaretPosition > 0 && newCaretPosition <= BeaconId1.Length)
-                    {
-                        textBox.SelectionStart = newCaretPosition;
-                    }
-                }
-                else if (textBoxName.StartsWith("beaconId2"))
-                {
-                    BeaconId2 = text;
-                }
-                else if (textBoxName.StartsWith("beaconId3"))
-                {
-                    BeaconId3 = text;
-                }
+//                TextBox textBox = sender as TextBox;
+//                string textBoxName = textBox.Name.ToLower();
+//                string text = textBox.Text;
+//
+//                if (textBoxName.StartsWith("beaconid1"))
+//                {
+//                    int oldTextLength = text.Length;
+//                    int oldCaretPosition = textBox.SelectionStart;
+//
+//                    BeaconId1 = BeaconFactory.FormatUuid(text);
+//
+//                    int newCaretPosition = oldCaretPosition + (BeaconId1.Length - oldTextLength);
+//
+//                    if (newCaretPosition > 0 && newCaretPosition <= BeaconId1.Length)
+//                    {
+//                        textBox.SelectionStart = newCaretPosition;
+//                    }
+//                }
+//                else if (textBoxName.StartsWith("beaconId2"))
+//                {
+//                    BeaconId2 = text;
+//                }
+//                else if (textBoxName.StartsWith("beaconId3"))
+//                {
+//                    BeaconId3 = text;
+//                }
 
                 SaveApplicationSettings(KeyBeaconId1);
             }

@@ -67,7 +67,7 @@
         </DataTemplate>
         
         <!-- Advertise -->
-        <DataTemplate x:Key="AdvertiseDataTemplate">
+        <DataTemplate x:Key="AdvertiseDataTemplate" x:DataType="pages:MainPage">
             <Grid MinWidth="320">
                 <StackPanel>
                     <TextBlock
@@ -79,7 +79,7 @@
                         x:Name="beaconId1TextBox"
                         Margin="0,6,0,0"
                         MaxLength="36"
-                        Text="{Binding Path=BeaconId1, ElementName=thisPage}"
+                        Text="{x:Bind Model.BeaconId1, Mode=TwoWay}"
                         IsEnabled="{Binding Path=IsAdvertisingStarted, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
                         TextChanged="OnAdvertisingTextBoxTextChanged" />
                     <Grid>
@@ -97,7 +97,7 @@
                                 x:Name="beaconId2TextBox"
                                 Margin="0,6,6,0"
                                 InputScope="Number"
-                                Text="{Binding Path=BeaconId2, ElementName=thisPage, Mode=TwoWay}"
+                                Text="{x:Bind Model.BeaconId2, Mode=TwoWay}"
                                 IsEnabled="{Binding Path=IsAdvertisingStarted, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
                                 TextChanged="OnAdvertisingTextBoxTextChanged" />
                         </StackPanel>
@@ -111,7 +111,7 @@
                                 x:Name="beaconId3TextBox"
                                 Margin="6,6,0,0"
                                 InputScope="Number"
-                                Text="{Binding Path=BeaconId3, ElementName=thisPage, Mode=TwoWay}"
+                                Text="{x:Bind Model.BeaconId3, Mode=TwoWay}"
                                 IsEnabled="{Binding Path=IsAdvertisingStarted, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
                                 TextChanged="OnAdvertisingTextBoxTextChanged" />
                         </StackPanel>

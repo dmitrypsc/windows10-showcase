@@ -33,7 +33,40 @@ namespace SensorbergShowcase.Model
         private string _apiKey;
         private bool _showApiKeySelection;
         private bool _isApiKeyValid;
+        private string _beaconId3;
+        private string _beaconId2;
+        private string _beaconId1;
         public ObservableCollection<string> ResolvedActions { get; } = new ObservableCollection<string>();
+
+        public string BeaconId1
+        {
+            get { return _beaconId1; }
+            set
+            {
+                _beaconId1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string BeaconId2
+        {
+            get { return _beaconId2; }
+            set
+            {
+                _beaconId2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string BeaconId3
+        {
+            get { return _beaconId3; }
+            set
+            {
+                _beaconId3 = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool IsBigScreen
         {

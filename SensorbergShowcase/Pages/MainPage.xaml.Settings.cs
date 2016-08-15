@@ -121,17 +121,17 @@ namespace SensorbergShowcase.Pages
 
             if (_localSettings.Values.ContainsKey(KeyBeaconId1))
             {
-                BeaconId1 = _localSettings.Values[KeyBeaconId1].ToString();
+                Model.BeaconId1 = _localSettings.Values[KeyBeaconId1].ToString();
             }
 
             if (_localSettings.Values.ContainsKey(KeyBeaconId2))
             {
-                BeaconId2 = _localSettings.Values[KeyBeaconId2].ToString();
+                Model.BeaconId2 = _localSettings.Values[KeyBeaconId2].ToString();
             }
 
             if (_localSettings.Values.ContainsKey(KeyBeaconId3))
             {
-                BeaconId3 = _localSettings.Values[KeyBeaconId3].ToString();
+                Model.BeaconId3 = _localSettings.Values[KeyBeaconId3].ToString();
             }
 
             if (_localSettings.Values.ContainsKey(KeyEnableBackgroundTask))
@@ -170,9 +170,9 @@ namespace SensorbergShowcase.Pages
 
             if (string.IsNullOrEmpty(key) || key.Equals(KeyBeaconId1))
             {
-                _localSettings.Values[KeyBeaconId1] = BeaconId1;
-                _localSettings.Values[KeyBeaconId2] = BeaconId2;
-                _localSettings.Values[KeyBeaconId3] = BeaconId3;
+                _localSettings.Values[KeyBeaconId1] = Model.BeaconId1;
+                _localSettings.Values[KeyBeaconId2] = Model.BeaconId2;
+                _localSettings.Values[KeyBeaconId3] = Model.BeaconId3;
             }
         }
 
