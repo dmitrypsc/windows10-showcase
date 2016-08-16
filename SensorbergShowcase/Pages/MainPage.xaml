@@ -20,348 +20,6 @@
         <converters:BoolToBackgroundImageSourceConverter x:Key="BackgroundImageSourceConverter" />
         <converters:BoolToColorStringConverter x:Key="BoolToColorStringConverter" />
         
-        <!-- Scanner -->
-        <DataTemplate x:Key="ScannerDataTemplate">
-            <Grid Margin="0,0,0,24">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <ListBox
-                    x:Name="scannedBeaconsListBox"
-                    Background="Transparent"
-                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                    BorderBrush="Transparent"
-                    ItemsSource="{Binding Model.BeaconModel.BeaconDetailsCollection, ElementName=thisPage, Mode=OneWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate >
-                            <controls:BeaconDetailsControl Width="{Binding Model.BeaconDetailsControlWidth, ElementName=thisPage, Mode=OneWay}" BeaconDetail="{Binding}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Grid
-                    x:Name="emptyScannerPageInfoGrid"
-                    Width="{Binding Model.BeaconDetailsControlWidth, ElementName=thisPage, Mode=OneWay}"
-                    Height="50"
-                    VerticalAlignment="Center"
-                    Visibility="{Binding Model.BeaconsInRange, ElementName=thisPage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        x:Name="scannerStateTextBlock"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{Binding Model.IsScanningText, ElementName=thisPage, Mode=OneWay}" />
-                    <ProgressBar
-                        x:Name="scannerProgressBar"
-                        Grid.Row="1"
-                        Margin="0,6,0,0"
-                        VerticalAlignment="Top"
-                        Background="Transparent"
-                        IsIndeterminate="True"
-                        Visibility="{Binding Model.IsScanning, ElementName=thisPage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                </Grid>
-            </Grid>
-        </DataTemplate>
-        
-        <!-- Advertise -->
-        <DataTemplate x:Key="AdvertiseDataTemplate">
-            <Grid MinWidth="320">
-                <StackPanel>
-                    <TextBlock
-                        Margin="0,6,0,0"
-                        Style="{ThemeResource BodyTextBlockStyle}"
-                        FontWeight="ExtraLight"
-                        Text="Beacon UUID" />
-                    <TextBox
-                        x:Name="beaconId1TextBox"
-                        Margin="0,6,0,0"
-                        MaxLength="36"
-                        Text="{Binding Path=BeaconId1, ElementName=thisPage}"
-                        IsEnabled="{Binding Path=IsAdvertisingStarted, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                        TextChanged="OnAdvertisingTextBoxTextChanged" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width=".5*" />
-                            <ColumnDefinition Width=".5*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,12,0,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                FontWeight="ExtraLight"
-                                Text="Major" />
-                            <TextBox
-                                x:Name="beaconId2TextBox"
-                                Margin="0,6,6,0"
-                                InputScope="Number"
-                                Text="{Binding Path=BeaconId2, ElementName=thisPage, Mode=TwoWay}"
-                                IsEnabled="{Binding Path=IsAdvertisingStarted, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                                TextChanged="OnAdvertisingTextBoxTextChanged" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock
-                                Margin="6,12,0,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                FontWeight="ExtraLight"
-                                Text="Minor" />
-                            <TextBox
-                                x:Name="beaconId3TextBox"
-                                Margin="6,6,0,0"
-                                InputScope="Number"
-                                Text="{Binding Path=BeaconId3, ElementName=thisPage, Mode=TwoWay}"
-                                IsEnabled="{Binding Path=IsAdvertisingStarted, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                                TextChanged="OnAdvertisingTextBoxTextChanged" />
-                        </StackPanel>
-                    </Grid>
-                    <Button
-                        x:Name="toggleAdvertisingButton"
-                        Margin="0,18,0,0"
-                        Click="OnToggleAdvertizingButtonClickedAsync">
-                        <Button.Content>
-                            <TextBlock
-                                x:Name="toggleAdvertisingButtonContent"
-                                Style="{ThemeResource SubtitleTextBlockStyle}"
-                                Text="{Binding Path=IsAdvertisingStarted, ElementName=thisPage, Converter={StaticResource AdvertisingButtonTextConverter}}" />
-                        </Button.Content>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
-
-        <!-- Settings -->
-        <DataTemplate x:Key="SettingsDataTemplate">
-            <Grid>
-                <ScrollViewer MaxWidth="400">
-                    <StackPanel Margin="0,0,12,48">
-                        <!-- Actions setting -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width=".7*" />
-                                <ColumnDefinition Width=".3*" />
-                            </Grid.ColumnDefinitions>
-                            <ProgressBar
-                                x:Name="settingsProgressBar"
-                                Grid.ColumnSpan="2"
-                                VerticalAlignment="Top"
-                                Background="Transparent"
-                                IsIndeterminate="True"
-                                Visibility="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <TextBlock
-                                x:Uid="beaconActions"
-                                HorizontalAlignment="Left"
-                                Style="{ThemeResource TitleTextBlockStyle}" />
-                            <ToggleSwitch
-                                x:Name="enableActionsSwitch"
-                                Grid.Column="1"
-                                Margin="0,0,-60,0"
-                                HorizontalAlignment="Right"
-                                IsOn="{Binding Path=Model.AreActionsEnabled, ElementName=thisPage, Mode=TwoWay}"
-                                Toggled="OnEnableActionsSwitchToggled" />
-                        </Grid>
-                        <Grid Margin="0,-6,0,0"
-                              Visibility="{Binding Path=Model.AreActionsEnabled, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <TextBlock
-                                x:Uid="sdkStatusOk"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Opacity="0.8"
-                                Foreground="Green"
-                                FontWeight="ExtraLight"
-                                FontStyle="Italic"
-                                TextWrapping="Wrap"
-                                Visibility="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <TextBlock
-                                x:Uid="invalidOrMissingLayoutError"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Foreground="Red"
-                                FontWeight="ExtraLight"
-                                FontStyle="Italic"
-                                TextWrapping="Wrap"
-                                Visibility="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                        </Grid>
-
-                        <!-- Background task settings -->
-                        <Grid Margin="0,12,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width=".7*" />
-                                <ColumnDefinition Width=".3*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                x:Uid="backgroundTask"
-                                HorizontalAlignment="Left"
-                                Style="{ThemeResource TitleTextBlockStyle}" />
-                            <ToggleSwitch
-                                x:Name="enableBackgroundTaskSwitch"
-                                Grid.Column="1"
-                                Margin="0,-6,-60,0"
-                                HorizontalAlignment="Right"
-                                IsOn="{Binding Path=Model.ShouldRegisterBackgroundTask, ElementName=thisPage, Mode=TwoWay}"
-                                Toggled="OnEnableBackgroundTaskSwitchToggledAsync" />
-                        </Grid>
-                        <Grid Margin="0,-6,0,0"
-                              Visibility="{Binding Path=Model.ShouldRegisterBackgroundTask, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <TextBlock
-                                x:Uid="bgTaskStatusOk"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Opacity="0.8"
-                                Foreground="Green"
-                                FontWeight="ExtraLight"
-                                FontStyle="Italic"
-                                TextWrapping="Wrap"
-                                Visibility="{Binding Path=Model.IsBackgroundTaskRegistered, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <TextBlock
-                                x:Uid="bgTaskStatusNotRegistered"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Foreground="Red"
-                                FontWeight="ExtraLight"
-                                FontStyle="Italic"
-                                TextWrapping="Wrap"
-                                Visibility="{Binding Path=Model.IsBackgroundTaskRegistered, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                        </Grid>
-
-                        <!-- API key settings -->
-                        <TextBlock
-                            x:Uid="apiKey"
-                            Margin="0,12,0,0"
-                            Style="{ThemeResource TitleTextBlockStyle}" />
-                        <TextBlock
-                            x:Name="appNameTextBlock"
-                            Margin="0,6,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="app name"
-                            Visibility="Collapsed" />
-                        <TextBlock
-                            x:Uid="enterApiKey"
-                            Margin="0,6,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            FontWeight="ExtraLight" />
-                        <TextBox
-                            x:Name="apiKeyTextBox"
-                            Margin="0,6,0,0"
-                            Text="{Binding Model.ApiKey}"
-                            IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                            TextChanged="OnSettingsTextBoxTextChanged" />
-                        <Grid Margin="0,6,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width=".5*" />
-                                <ColumnDefinition Width=".5*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                x:Uid="apiKeyNotValidated"
-                                HorizontalAlignment="Left"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Foreground="Red"
-                                FontWeight="ExtraLight"
-                                FontStyle="Italic"
-                                Visibility="{Binding Path=Model.IsApiKeyValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                            <TextBlock
-                                x:Uid="apiKeyIsValid"
-                                HorizontalAlignment="Left"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Foreground="Green"
-                                FontWeight="ExtraLight"
-                                FontStyle="Italic"
-                                Opacity="0.8"
-                                Visibility="{Binding Path=Model.IsApiKeyValid, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <Button
-                                Grid.Column="1"
-                                Margin="0,-3,0,0"
-                                HorizontalAlignment="Right"
-                                Background="Transparent"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                IsEnabled="{Binding Path=Model.IsApiKeyValid, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                                Click="OnValidateApiKeyButtonClicked">
-                                <Button.Content>
-                                    <TextBlock
-                                        x:Uid="validateApiKey"
-                                        Style="{ThemeResource BodyTextBlockStyle}" />
-                                </Button.Content>
-                            </Button>
-                        </Grid>
-                        <StackPanel Visibility="{Binding IsScannerAvailable, ElementName=thisPage, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <TextBlock
-                                x:Uid="or"
-                                Margin="0,12,0,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                HorizontalAlignment="Center" />
-                            <Button x:Name="scanApiKeyButton"
-                                    Margin="0,6,0,0"
-                                    HorizontalAlignment="Center"
-                                    IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                                    Click="OnScanApiQrCodeButtonClicked">
-                                <Button.Content>
-                                    <TextBlock
-                                        x:Uid="scanApiKeyFromQrCode"
-                                        Style="{ThemeResource SubtitleTextBlockStyle}" />
-                                </Button.Content>
-                            </Button>
-                        </StackPanel>
-                        <TextBlock
-                            x:Uid="or"
-                            Margin="0,12,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            HorizontalAlignment="Center" />
-                        <TextBlock
-                            x:Uid="email"
-                            Margin="0,6,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            FontWeight="ExtraLight" />
-                        <TextBox
-                            x:Name="emailTextBox"
-                            Margin="0,6,0,0"
-                            Text="{Binding Path=Email, ElementName=thisPage}"
-                            IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                            TextChanged="OnSettingsTextBoxTextChanged" />
-                        <TextBlock
-                            x:Uid="password"
-                            Margin="0,12,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            FontWeight="ExtraLight" />
-                        <PasswordBox
-                            x:Name="passwordBox"
-                            Margin="0,6,0,0"
-                            Password="{Binding Path=Password, ElementName=thisPage}"
-                            IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                            PasswordChanged="OnPasswordBoxPasswordChanged" />
-                        <Button
-                            x:Name="fetchApiKeyButton"
-                            Margin="0,18,0,0"
-                            IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                            Click="OnFetchApiKeyButtonClickedAsync">
-                            <Button.Content>
-                                <TextBlock
-                                    x:Uid="fetchApiKey"
-                                    Style="{ThemeResource SubtitleTextBlockStyle}" />
-                            </Button.Content>
-                        </Button>
-                        <Button
-                            Margin="-6,18,0,0"
-                            Background="Transparent"
-                            Style="{ThemeResource TextBlockButtonStyle}"
-                            IsEnabled="{Binding Path=IsValidatingOrFetchingApiKey, ElementName=thisPage, Converter={StaticResource InvertValueConverter}}"
-                            Click="OnResetToDemoApiKeyButtonClicked">
-                            <Button.Content>
-                                <TextBlock
-                                    x:Uid="resetToDemoApiKey"
-                                    Style="{ThemeResource BodyTextBlockStyle}" />
-                            </Button.Content>
-                        </Button>
-                        <StackPanel Margin="10" Visibility="{Binding Model.ShowApiKeySelection, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <TextBlock Text="Select the application to use:"/>
-                            <ComboBox Name="appCombobox" ItemsSource="{Binding Model.Applications}" SelectedItem="{Binding Model.Application, Mode=TwoWay}" Margin="0,10,0,0">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="data:SensorbergApplication">
-                                        <TextBlock Text="{x:Bind AppName}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </Grid>
-        </DataTemplate>
         <DataTemplate x:Key="ActionItemTemplate">
             <TextBlock Text="{Binding}" Margin="5"/>
         </DataTemplate>
@@ -378,8 +36,7 @@
         <Hub
             x:Name="hub"
             MinWidth="1200"
-            Background="{ThemeResource AppBarBackgroundThemeBrush}"
-            Visibility="{x:Bind Model.IsBigScreen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Hub.Header>
                 <Grid Visibility="{x:Bind Model.IsBigScreen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock
@@ -391,26 +48,41 @@
                         TextWrapping="NoWrap" />
                 </Grid>
             </Hub.Header>
-            <HubSection Width="400" ContentTemplate="{StaticResource ScannerDataTemplate}">
+            <HubSection Width="400" DataContext="{x:Bind}">
                 <HubSection.Header>
                     <TextBlock
                         Style="{StaticResource SubheaderTextBlockStyle}"
                         Text="{x:Bind Model.HeaderWithBeaconCount, Mode=OneWay}" />
                 </HubSection.Header>
+                <HubSection.ContentTemplate>
+                    <DataTemplate x:DataType="pages:MainPage">
+                        <controls:ScannerControl Model="{x:Bind Model}"/>
+                    </DataTemplate>
+                </HubSection.ContentTemplate>
             </HubSection>
-            <HubSection ContentTemplate="{StaticResource AdvertiseDataTemplate}">
+            <HubSection>
                 <HubSection.Header>
                     <TextBlock
                         x:Uid="advertise"
                         Style="{StaticResource SubheaderTextBlockStyle}" />
                 </HubSection.Header>
+                <HubSection.ContentTemplate>
+                    <DataTemplate x:DataType="pages:MainPage">
+                        <controls:AdvertiserControl Model="{x:Bind Model}"/>
+                    </DataTemplate>
+                </HubSection.ContentTemplate>
             </HubSection>
-            <HubSection ContentTemplate="{StaticResource SettingsDataTemplate}">
+            <HubSection>
                 <HubSection.Header>
                     <TextBlock
                         x:Uid="settings"
                         Style="{StaticResource SubheaderTextBlockStyle}" />
                 </HubSection.Header>
+                <HubSection.ContentTemplate>
+                    <DataTemplate x:DataType="pages:MainPage">
+                        <controls:SettingsControl  Model="{x:Bind Model}"/>
+                    </DataTemplate>
+                </HubSection.ContentTemplate>
             </HubSection>
             <HubSection>
                 <HubSection.Header>
@@ -419,7 +91,7 @@
                         Style="{StaticResource SubheaderTextBlockStyle}" />
                 </HubSection.Header>
                 <HubSection.ContentTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="pages:MainPage">
                         <Grid>
                             <ListView ItemsSource="{Binding Model.ResolvedActions}" ItemTemplate="{StaticResource ActionItemTemplate}"/>
                         </Grid>
@@ -427,48 +99,6 @@
                 </HubSection.ContentTemplate>
             </HubSection>
         </Hub>
-
-        <!-- Pivot is used on smaller screen (phones) -->
-        <Pivot
-            x:Name="pivot"
-            Background="{ThemeResource AppBarBackgroundThemeBrush}"
-            Visibility="{x:Bind Model.IsBigScreen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
-            <PivotItem ContentTemplate="{StaticResource ScannerDataTemplate}">
-                <PivotItem.Header>
-                    <TextBlock
-                        Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="{x:Bind Model.HeaderWithBeaconCount, Mode=OneWay}" />
-                </PivotItem.Header>
-            </PivotItem>
-            <PivotItem ContentTemplate="{StaticResource AdvertiseDataTemplate}">
-                <PivotItem.Header>
-                    <TextBlock
-                        x:Uid="advertise"
-                        Style="{StaticResource SubheaderTextBlockStyle}" />
-                </PivotItem.Header>
-            </PivotItem>
-            <PivotItem ContentTemplate="{StaticResource SettingsDataTemplate}">
-                <PivotItem.Header>
-                    <TextBlock
-                        x:Uid="settings"
-                        Style="{StaticResource SubheaderTextBlockStyle}" />
-                </PivotItem.Header>
-            </PivotItem>
-            <PivotItem>
-                <PivotItem.Header>
-                    <TextBlock
-                        x:Uid="actions"
-                        Style="{StaticResource SubheaderTextBlockStyle}" />
-                </PivotItem.Header>
-                <PivotItem.ContentTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <ListView ItemsSource="{Binding Model.ResolvedActions}" />
-                        </Grid>
-                    </DataTemplate>
-                </PivotItem.ContentTemplate>
-            </PivotItem>
-        </Pivot>
     </Grid>
 
     <Page.BottomAppBar>
@@ -492,6 +122,62 @@
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
