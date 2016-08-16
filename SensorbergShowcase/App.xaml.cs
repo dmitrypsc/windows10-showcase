@@ -43,7 +43,7 @@ namespace SensorbergShowcase
         {
             InitializeComponent();
             Suspending += OnSuspending;
-            LogManagerFactory.DefaultConfiguration.IsEnabled = false;
+//            LogManagerFactory.DefaultConfiguration.IsEnabled = false;
             HockeyClient.Current.Configure("d98620a9d3984f349f8685a25a3cfae1");
         }
 

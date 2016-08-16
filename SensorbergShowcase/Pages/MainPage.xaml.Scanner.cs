@@ -40,7 +40,7 @@ namespace SensorbergShowcase.Pages
             Logger.Debug("MainPage.SetScannerSpecificEvents: " + Model.HaveScannerSpecificEventsBeenHooked + " -> " + hook);
             if (Model.HaveScannerSpecificEventsBeenHooked != hook)
             {
-                IBeaconScanner scanner = _sdkManager.Scanner;
+                IBeaconScanner scanner = Model.SdkManager.Scanner;
 
                 if (hook)
                 {
@@ -117,7 +117,6 @@ namespace SensorbergShowcase.Pages
                         Model.BeaconModel.AddOrReplace(beacon);
                     }
 
-//                        Model.BeaconModel.SortBeaconsBasedOnDistance();
                     isExistingBeacon = true;
                 }
 
@@ -125,7 +124,6 @@ namespace SensorbergShowcase.Pages
                 if (!isExistingBeacon)
                 {
                     Model.BeaconModel.AddOrReplace(beacon);
-//                        Model.BeaconModel.SortBeaconsBasedOnDistance();
                 }
 
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
@@ -150,14 +148,14 @@ namespace SensorbergShowcase.Pages
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                if (_sdkManager.IsScannerStarted)
+                if (Model.SdkManager.IsScannerStarted)
                 {
-                    _sdkManager.StopScanner();
+                    Model.SdkManager.StopScanner();
                 }
                 else
                 {
                     SetScannerSpecificEvents(true); // Make sure the events are hooked
-                    _sdkManager.StartScanner();
+                    Model.SdkManager.StartScanner();
                 }
             });
         }
@@ -197,13 +195,13 @@ namespace SensorbergShowcase.Pages
                             messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("yes/Text"),
                                 new UICommandInvokedHandler((command) =>
                                 {
-                                    _sdkManager.LaunchBluetoothSettingsAsync();
+                                    Model.SdkManager.LaunchBluetoothSettingsAsync();
                                 })));
 
                             messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("no/Text"),
                                 new UICommandInvokedHandler((command) =>
                                 {
-                                    _sdkManager.StopScanner();
+                                    Model.SdkManager.StopScanner();
                                     _bluetoothNotOnDialogOperation = null;
                                 })));
 

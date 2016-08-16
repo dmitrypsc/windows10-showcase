@@ -27,16 +27,9 @@ namespace SensorbergShowcase.Pages
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        /*
-         * Insert the manufacturer ID and beacon code for filtering beacons below.
-         */
-        private const ushort ManufacturerId = 0x004c;
-        private const ushort BeaconCode = 0x0215;
-
         private static readonly ILogger Logger = LogManagerFactory.DefaultLogManager.GetLogger<MainPage>();
         private const int SettingsPivotIndex = 2;
 
-        private SDKManager _sdkManager;
         private bool _appIsOnForeground;
         public MainPageModel Model { get; } = new MainPageModel();
         public ICommand SendLogsCommand { get; } = new SendLogsCommand();
@@ -53,9 +46,16 @@ namespace SensorbergShowcase.Pages
             System.Diagnostics.Debug.WriteLine("Display size is " + displaySize + " inches");
             Model.IsBigScreen = displaySize > 6d ? true : false;
 
-            hub.Background.Opacity = 0.6d;
-            pivot.Background.Opacity = 0.6d;
-            
+            if (hub != null)
+            {
+                hub.Background.Opacity = 0.6d;
+            }
+
+            if (pivot != null)
+            {
+                pivot.Background.Opacity = 0.6d;
+            }
+
             SizeChanged += OnMainPageSizeChanged;
 
             MainPageScanner(); // Scanner specific construction
@@ -67,19 +67,20 @@ namespace SensorbergShowcase.Pages
         {
             Logger.Debug("MainPage.OnNavigatedTo");
             base.OnNavigatedTo(e);
+            Model.Frame = Frame;
 
-            if (_sdkManager == null)
+            if (Model.SdkManager == null)
             {
-                _sdkManager = SDKManager.Instance();
-                _sdkManager.ScannerStatusChanged += OnScannerStatusChangedAsync;
-                _sdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChangedAsync;
-                _sdkManager.BackgroundFiltersUpdated += OnBackgroundFiltersUpdatedAsync;
-                _sdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
-                _sdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
-                await TryToReinitializeSDK();
+                Model.SdkManager = SDKManager.Instance();
+                Model.SdkManager.ScannerStatusChanged += OnScannerStatusChangedAsync;
+                Model.SdkManager.LayoutValidityChanged += OnBeaconLayoutValidityChangedAsync;
+                Model.SdkManager.BackgroundFiltersUpdated += OnBackgroundFiltersUpdatedAsync;
+                Model.SdkManager.BeaconActionResolved += OnBeaconActionResolvedAsync;
+                Model.SdkManager.FailedToResolveBeaconAction += OnFailedToResolveBeaconAction;
+                await Model.TryToReinitializeSDK();
             }
 
-            LoadApplicationSettings();
+            Model.LoadApplicationSettings();
 
             if (QrCodeScannerPage.ScannedQrCode != null)
             {
@@ -91,17 +92,11 @@ namespace SensorbergShowcase.Pages
                 }
 
                 Model.ApiKey = QrCodeScannerPage.ScannedQrCode;
-                SaveApplicationSettings(KeyApiKey);
+                Model.SaveApplicationSettings(MainPageModel.KeyApiKey);
             }
 
-            ValidateApiKeyAsync().ConfigureAwait(false); // Do not await
+            Model.ValidateApiKeyAsync().ConfigureAwait(false); // Do not await
 
-            if (_advertiser == null)
-            {
-                _advertiser = new Advertiser();
-                _advertiser.ManufacturerId = ManufacturerId;
-                _advertiser.BeaconCode = BeaconCode;
-            }
 
             SetScannerSpecificEvents(true);
 
@@ -122,27 +117,16 @@ namespace SensorbergShowcase.Pages
 
             SetScannerSpecificEvents(false);
 
-            if (_sdkManager.IsScannerStarted)
+            if (Model.SdkManager.IsScannerStarted)
             {
-                _sdkManager.StopScanner();
+                Model.SdkManager.StopScanner();
             }
 
-            SaveApplicationSettings();
+            Model.SaveApplicationSettings();
 
             base.OnNavigatedFrom(e);
         }
 
-        /// <summary>
-        /// Helper method for showing informational message dialogs, which do not require command handling.
-        /// </summary>
-        /// <param name="message">The message to show.</param>
-        /// <param name="title">The title of the message dialog.</param>
-        private async void ShowInformationalMessageDialogAsync(string message, string title = null)
-        {
-            MessageDialog messageDialog = (title == null) ? new MessageDialog(message) : new MessageDialog(message, title);
-            messageDialog.Commands.Add(new UICommand(App.ResourceLoader.GetString("ok/Text")));
-            await messageDialog.ShowAsync();
-        }
 
         /// <summary>
         /// Creates and displays a message dialog containing the current status of the SDK and Bluetooth.
@@ -173,7 +157,7 @@ namespace SensorbergShowcase.Pages
                 "\n" + App.ResourceLoader.GetString("apiKey/Text") + ": "
                 + (Model.IsApiKeyValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"))
                 + "\n" + App.ResourceLoader.GetString("beaconLayout/Text") + ": "
-                + (IsLayoutValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"));
+                + (Model.IsLayoutValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"));
 
             MessageDialog messageDialog = new MessageDialog(
                 statusAsContentString,
@@ -198,16 +182,16 @@ namespace SensorbergShowcase.Pages
         private void OnVisibilityChanged(object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
             _appIsOnForeground = e.Visible;
-            _sdkManager.OnApplicationVisibilityChanged(sender, e);
+            Model.SdkManager.OnApplicationVisibilityChanged(sender, e);
 
-            if (_appIsOnForeground)
-            {
-                SetScannerSpecificEvents(true);
-            }
-            else
-            {
-                SetScannerSpecificEvents(false);
-            }
+//            if (_appIsOnForeground)
+//            {
+//                SetScannerSpecificEvents(true);
+//            }
+//            else
+//            {
+//                SetScannerSpecificEvents(false);
+//            }
         }
 
         private void OnMainPageSizeChanged(object sender, SizeChangedEventArgs e)
@@ -218,7 +202,7 @@ namespace SensorbergShowcase.Pages
             }
             else
             {
-                if (layoutGrid.ActualWidth > 0)
+                if (layoutGrid?.ActualWidth > 0)
                 {
                     Model.BeaconDetailsControlWidth = layoutGrid.ActualWidth - 40d;
                 }

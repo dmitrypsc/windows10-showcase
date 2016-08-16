@@ -22,22 +22,6 @@ namespace SensorbergShowcase.Pages
             private set;
         }
 
-        public bool IsLayoutValid
-        {
-            get
-            {
-                return (bool)GetValue(IsLayoutValidProperty);
-            }
-            private set
-            {
-                SetValue(IsLayoutValidProperty, value);
-            }
-        }
-        public static readonly DependencyProperty IsLayoutValidProperty =
-            DependencyProperty.Register("IsLayoutValid", typeof(bool), typeof(MainPage),
-                new PropertyMetadata(false));
-
-
         private async void OnBeaconLayoutValidityChangedAsync(object sender, bool e)
         {
             if (Model.ShouldRegisterBackgroundTask && e)
@@ -47,15 +31,15 @@ namespace SensorbergShowcase.Pages
                     IList<string> ids = ServiceManager.LayoutManager.Layout.AccountBeaconId1S;
                     if (ids.Count > 0)
                     {
-                        _sdkManager.Configuration.BackgroundBeaconUuidSpace = ids[0];
+                        Model.SdkManager.Configuration.BackgroundBeaconUuidSpace = ids[0];
                     }
                 }
 
-                await _sdkManager.RegisterBackgroundTaskAsync();
+                await Model.SdkManager.RegisterBackgroundTaskAsync();
             }
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                IsLayoutValid = e;
+                Model.IsLayoutValid = e;
             });
         }
 
