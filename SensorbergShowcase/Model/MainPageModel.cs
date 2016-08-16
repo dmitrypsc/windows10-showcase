@@ -67,7 +67,6 @@ namespace SensorbergShowcase.Model
         private string _password;
         private bool _isValidatingOrFetchingApiKey;
         private bool _isLayoutValid;
-        private bool _isScannerAvailable;
         public ObservableCollection<string> ResolvedActions { get; } = new ObservableCollection<string>();
         public SDKManager SdkManager { get; set; }
 
@@ -317,15 +316,7 @@ namespace SensorbergShowcase.Model
             }
         }
 
-        public bool IsScannerAvailable
-        {
-            get { return _isScannerAvailable; }
-            set
-            {
-                _isScannerAvailable = value;
-                OnPropertyChanged();
-            }
-        }
+        public bool IsScannerAvailable { get; set; }
 
         public Frame Frame { get; set; }
 

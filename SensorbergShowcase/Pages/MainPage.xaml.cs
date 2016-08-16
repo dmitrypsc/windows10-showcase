@@ -40,11 +40,13 @@ namespace SensorbergShowcase.Pages
         /// </summary>
         public MainPage()
         {
+            Model.IsScannerAvailable = AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.IoT";
+
             InitializeComponent();
 
             double displaySize = DeviceUtils.ResolveDisplaySizeInInches();
             System.Diagnostics.Debug.WriteLine("Display size is " + displaySize + " inches");
-            Model.IsBigScreen = displaySize > 6d ? true : false;
+            Model.IsBigScreen = displaySize > 6d;
 
             if (hub != null)
             {
@@ -86,7 +88,7 @@ namespace SensorbergShowcase.Pages
             {
                 Logger.Debug("MainPage.OnNavigatedTo: Applying the scanned API key: " + QrCodeScannerPage.ScannedQrCode);
 
-                if (pivot.Visibility == Visibility.Visible)
+                if (pivot != null)
                 {
                     pivot.SelectedIndex = SettingsPivotIndex;
                 }
