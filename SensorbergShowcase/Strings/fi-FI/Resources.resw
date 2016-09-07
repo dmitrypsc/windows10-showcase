@@ -276,7 +276,7 @@
   <data name="valid.Text" xml:space="preserve">
     <value>kelvollinen</value>
   </data>
-  <data name="validateApiKey.Text" xml:space="preserve">
+  <data name="validateApiKey.Content" xml:space="preserve">
     <value>Tarkista API-avaimen kelvollisuus</value>
   </data>
   <data name="yes.Text" xml:space="preserve">

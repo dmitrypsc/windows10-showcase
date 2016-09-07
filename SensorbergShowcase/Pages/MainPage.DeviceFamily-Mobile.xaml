@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:SensorbergShowcase.Converters"
-    xmlns:controls="using:SensorbergShowcase.Controls"
     xmlns:pages="using:SensorbergShowcase.Pages"
+    xmlns:controls="using:SensorbergControlLibrary.Controls"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -32,7 +32,7 @@
                 </PivotItem.Header>
                 <PivotItem.ContentTemplate>
                     <DataTemplate x:DataType="pages:MainPage">
-                        <controls:ScannerControl Model="{x:Bind Model}" />
+                        <controls:ScannerControl />
                     </DataTemplate>
                 </PivotItem.ContentTemplate>
             </PivotItem>
@@ -44,7 +44,7 @@
                 </PivotItem.Header>
                 <PivotItem.ContentTemplate>
                     <DataTemplate x:DataType="pages:MainPage">
-                        <controls:AdvertiserControl Model="{x:Bind Model}" />
+                        <controls:AdvertiserControl />
                     </DataTemplate>
                 </PivotItem.ContentTemplate>
             </PivotItem>
@@ -56,7 +56,7 @@
                 </PivotItem.Header>
                 <PivotItem.ContentTemplate>
                     <DataTemplate x:DataType="pages:MainPage">
-                        <controls:SettingsControl Model="{x:Bind Model}" />
+                        <controls:SettingsControl />
                     </DataTemplate>
                 </PivotItem.ContentTemplate>
             </PivotItem>

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="advertise.Text" xml:space="preserve">
-    <value>advertise</value>
+    <value>Beacon Properties</value>
   </data>
   <data name="apiKey.Text" xml:space="preserve">
     <value>API key</value>
@@ -226,7 +226,7 @@
     <value>Scanner is stopped</value>
   </data>
   <data name="scannerWithBeaconCount.Text" xml:space="preserve">
-    <value>scanner ({0})</value>
+    <value>Scanner ({0})</value>
   </data>
   <data name="scanning.Text" xml:space="preserve">
     <value>Scanning...</value>
@@ -241,7 +241,7 @@
     <value>sensorberg showcase</value>
   </data>
   <data name="settings.Text" xml:space="preserve">
-    <value>settings</value>
+    <value>Settings</value>
   </data>
   <data name="startAdvertising.Label" xml:space="preserve">
     <value>start advertising</value>
@@ -276,7 +276,7 @@
   <data name="valid.Text" xml:space="preserve">
     <value>valid</value>
   </data>
-  <data name="validateApiKey.Text" xml:space="preserve">
+  <data name="validateApiKey.Content" xml:space="preserve">
     <value>Validate API key</value>
   </data>
   <data name="yes.Text" xml:space="preserve">

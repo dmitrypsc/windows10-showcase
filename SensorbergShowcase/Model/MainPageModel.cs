@@ -17,6 +17,7 @@ using SensorbergSDK;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using MetroLog;
+using SensorbergControlLibrary.Model;
 using SensorbergSDK.Internal.Data;
 using SensorbergSDK.Internal.Services;
 
@@ -47,13 +48,11 @@ namespace SensorbergShowcase.Model
         private bool _haveScannerSpecificEventsBeenHooked;
         private bool _beaconsInRange;
         private string _headerWithBeaconCount;
-        private bool _isBigScreen;
         private bool _shouldRegisterBackgroundTask;
         private bool _isBackgroundTaskRegistered;
         private bool _areActionsEnabled;
         private List<SensorbergApplication> _applications;
         private SensorbergApplication _application;
-        private string _apiKey;
         private bool _showApiKeySelection;
         private bool _isApiKeyValid;
         private string _beaconId3;
@@ -106,16 +105,6 @@ namespace SensorbergShowcase.Model
             set
             {
                 _beaconId3 = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsBigScreen
-        {
-            get { return _isBigScreen; }
-            set
-            {
-                _isBigScreen = value;
                 OnPropertyChanged();
             }
         }
@@ -248,10 +237,10 @@ namespace SensorbergShowcase.Model
 
         public string ApiKey
         {
-            get { return _apiKey; }
+            get { return GetSettingsString("ApiKey", SDKManager.DemoApiKey); }
             set
             {
-                _apiKey = value;
+                ApplicationData.Current.LocalSettings.Values["ApiKey"] = value;
                 OnPropertyChanged();
             }
         }
@@ -320,6 +309,15 @@ namespace SensorbergShowcase.Model
 
         public Frame Frame { get; set; }
 
+
+        private string GetSettingsString(string key, string defaultvalue)
+        {
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+            {
+                return ApplicationData.Current.LocalSettings.Values[key] as string;
+            }
+            return defaultvalue;
+        }
         /// <summary>
         /// Saves the application settings.
         /// </summary>
