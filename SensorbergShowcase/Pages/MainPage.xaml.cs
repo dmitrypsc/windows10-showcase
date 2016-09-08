@@ -51,8 +51,8 @@ namespace SensorbergShowcase.Pages
         private const ushort MANUFACTURER_ID = 0x004c;
         private const ushort BEACON_CODE = 0x0215;
 
-        public const string TIMER_CLASS_NAME = "SensorbergShowcase.TimedBackgroundTask";
-        public const string ADVERTISEMENT_CLASS_NAME = "SensorbergShowcase.AdvertisementWatcherBackgroundTask";
+        public const string TIMER_CLASS_NAME = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask";
+        public const string ADVERTISEMENT_CLASS_NAME = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask";
 
 
         public MainPage()
@@ -113,8 +113,9 @@ namespace SensorbergShowcase.Pages
                 AutoStartScanner = true
             });
         }
-        private void OnScannerStatusChangedAsync(object sender, ScannerStatus e)
+        private async void OnScannerStatusChangedAsync(object sender, ScannerStatus e)
         {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, ()=> Model.IsScanning = e == ScannerStatus.Started);
             if (e == ScannerStatus.Aborted && _bluetoothNotOnDialogOperation == null)
             {
                 if (Util.IsIoT)

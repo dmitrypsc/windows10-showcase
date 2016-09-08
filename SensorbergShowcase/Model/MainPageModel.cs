@@ -305,11 +305,6 @@ namespace SensorbergShowcase.Model
             }
         }
 
-        public bool IsScannerAvailable { get; set; }
-
-        public Frame Frame { get; set; }
-
-
         private string GetSettingsString(string key, string defaultvalue)
         {
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
@@ -317,89 +312,6 @@ namespace SensorbergShowcase.Model
                 return ApplicationData.Current.LocalSettings.Values[key] as string;
             }
             return defaultvalue;
-        }
-        /// <summary>
-        /// Saves the application settings.
-        /// </summary>
-        /// <param name="key">If empty or null, will save all settings. Otherwise will save the 
-        /// specific settings related to the given key.</param>
-        public void SaveApplicationSettings(string key = null)
-        {
-            Logger.Debug("SaveApplicationSettings Key={0}", key);
-            if (string.IsNullOrEmpty(key) || key.Equals(KeyEnableActions))
-            {
-                _localSettings.Values[KeyEnableActions] = AreActionsEnabled;
-            }
-
-            if (string.IsNullOrEmpty(key) || key.Equals(KeyEnableBackgroundTask))
-            {
-                _localSettings.Values[KeyEnableBackgroundTask] = ShouldRegisterBackgroundTask;
-            }
-
-
-            if (string.IsNullOrEmpty(key) || key.Equals(KeyApiKey))
-            {
-                _localSettings.Values[KeyApiKey] = ApiKey;
-                _localSettings.Values[KeyEmail] = Email;
-                _localSettings.Values[KeyPassword] = Password;
-            }
-
-            if (string.IsNullOrEmpty(key) || key.Equals(KeyBeaconId1))
-            {
-                _localSettings.Values[KeyBeaconId1] = BeaconId1;
-                _localSettings.Values[KeyBeaconId2] = BeaconId2;
-                _localSettings.Values[KeyBeaconId3] = BeaconId3;
-            }
-        }
-
-        public void LoadApplicationSettings()
-        {
-            Logger.Debug("LoadApplicationSettings");
-            if (_localSettings.Values.ContainsKey(KeyEnableActions))
-            {
-                AreActionsEnabled = (bool) _localSettings.Values[KeyEnableActions];
-            }
-
-            if (_localSettings.Values.ContainsKey(KeyApiKey))
-            {
-                ApiKey = _localSettings.Values[KeyApiKey].ToString();
-            }
-            else
-            {
-                ApiKey = SDKManager.DemoApiKey;
-            }
-
-            if (_localSettings.Values.ContainsKey(KeyEmail))
-            {
-                Email = _localSettings.Values[KeyEmail].ToString();
-            }
-
-            if (_localSettings.Values.ContainsKey(KeyPassword))
-            {
-                Password = _localSettings.Values[KeyPassword].ToString();
-            }
-
-            if (_localSettings.Values.ContainsKey(KeyBeaconId1))
-            {
-                BeaconId1 = _localSettings.Values[KeyBeaconId1].ToString();
-            }
-
-            if (_localSettings.Values.ContainsKey(KeyBeaconId2))
-            {
-                BeaconId2 = _localSettings.Values[KeyBeaconId2].ToString();
-            }
-
-            if (_localSettings.Values.ContainsKey(KeyBeaconId3))
-            {
-                BeaconId3 = _localSettings.Values[KeyBeaconId3].ToString();
-            }
-
-            if (_localSettings.Values.ContainsKey(KeyEnableBackgroundTask))
-            {
-                ShouldRegisterBackgroundTask = (bool) _localSettings.Values[KeyEnableBackgroundTask];
-            }
-
-            IsBackgroundTaskRegistered = SdkManager.IsBackgroundTaskRegistered;
         }
 
         public async Task TryToReinitializeSDK()

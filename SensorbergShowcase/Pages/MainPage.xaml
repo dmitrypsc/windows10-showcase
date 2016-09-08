@@ -13,19 +13,21 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <converters:InvertValueConverter x:Key="InvertValueConverter" />
-        <converters:BoolToScannerStateTextConverter x:Key="ScannerStateTextConverter" />
-        <converters:BoolToAdvertisingButtonTextConverter x:Key="AdvertisingButtonTextConverter" />
-        <converters:BoolToBackgroundImageSourceConverter x:Key="BackgroundImageSourceConverter" />
-        <converters:BoolToColorStringConverter x:Key="BoolToColorStringConverter" />
-        
         <DataTemplate x:Key="ActionItemTemplate">
             <TextBlock Text="{Binding}" Margin="5"/>
         </DataTemplate>
     </Page.Resources>
 
-    <Grid x:Name="layoutGrid" Background="Blue">
+    <Grid x:Name="layoutGrid" >
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <LinearGradientBrush.Transform>
+                    <CompositeTransform Rotation="-45" TranslateX="600"/>
+                </LinearGradientBrush.Transform>
+                <GradientStop Color="#FF002D4D" Offset="0"/>
+                <GradientStop Color="#3023AE" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
 
         <!-- Hub is used on big screens -->
         <Hub
@@ -64,7 +66,7 @@
                 </HubSection.Header>
                 <HubSection.ContentTemplate>
                     <DataTemplate x:DataType="pages:MainPage">
-                        <controls:SettingsControl ApiKey="{x:Bind Model.ApiKey, Mode=TwoWay}"  ApiKeyChanged="SettingsControl_OnApiKeyChanged"/>
+                        <controls:SettingsControl ApiKey="{x:Bind Model.ApiKey, Mode=TwoWay}"  ApiKeyChanged="SettingsControl_OnApiKeyChanged" Width="350"/>
                     </DataTemplate>
                 </HubSection.ContentTemplate>
             </HubSection>
@@ -82,17 +84,41 @@
                     </DataTemplate>
                 </HubSection.ContentTemplate>
             </HubSection>
+            <HubSection Header="Status">
+                <HubSection.ContentTemplate>
+                    <DataTemplate x:DataType="pages:MainPage">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Api Key valid:"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1"  Margin="10,0,0,0" Text="{x:Bind Model.SdkManager.Status.IsApiKeyValid, Mode=OneWay}" HorizontalAlignment="Right"/>
+
+                            <TextBlock Grid.Row="1" Text="Bluetooth scanning:"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1"  Margin="10,0,0,0"  Text="{x:Bind Model.IsScanning, Mode=OneWay}" HorizontalAlignment="Right"/>
+                            
+                            <TextBlock Grid.Row="2" Text="Platform reachable:"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1"  Margin="10,0,0,0"  Text="{x:Bind Model.SdkManager.Status.IsResolverReachable, Mode=OneWay}" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </DataTemplate>
+                </HubSection.ContentTemplate>
+            </HubSection>
         </Hub>
     </Grid>
 
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton
-                x:Name="checkStatusButton"
-                x:Uid="checkStatus"
-                Foreground="{Binding Path=IsLayoutValid, ElementName=thisPage, Converter={StaticResource BoolToColorStringConverter}, ConverterParameter='Green,Red'}"
-                Icon="Repair"
-                Click="OnCheckStatusButtonClickedAsync" />
             <AppBarToggleButton
                 x:Name="toggleScanButton"
                 x:Uid="toggleScanner"
@@ -106,66 +132,3 @@
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
