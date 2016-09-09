@@ -14,7 +14,6 @@
 //
 //*********************************************************
 
-using SensorbergShowcase.Utils;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,10 +32,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using SensorbergShowcase.Utils;
 using ZXing;
 using ZXing.Common;
 
-namespace SensorbergShowcase.Pages
+namespace SensorbergShowcase.Views
 {
     /// <summary>
     /// Page for scanning API keys from QR codes.

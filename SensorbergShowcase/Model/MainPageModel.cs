@@ -9,17 +9,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using SensorbergSDK;
-using Windows.UI.Xaml;
+using Windows.UI.Xaml;  
 using Windows.UI.Xaml.Controls;
 using MetroLog;
 using SensorbergControlLibrary.Model;
 using SensorbergSDK.Internal.Data;
 using SensorbergSDK.Internal.Services;
+using SensorbergShowcase.Views;
 
 namespace SensorbergShowcase.Model
 {
@@ -69,43 +71,13 @@ namespace SensorbergShowcase.Model
         public ObservableCollection<string> ResolvedActions { get; } = new ObservableCollection<string>();
         public SDKManager SdkManager { get; set; }
 
-        public bool IsAdvertisingStarted
+        public string AppVersion
         {
-            get { return _isAdvertisingStarted; }
-            set
+            get
             {
-                _isAdvertisingStarted = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string BeaconId1
-        {
-            get { return _beaconId1; }
-            set
-            {
-                _beaconId1 = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string BeaconId2
-        {
-            get { return _beaconId2; }
-            set
-            {
-                _beaconId2 = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string BeaconId3
-        {
-            get { return _beaconId3; }
-            set
-            {
-                _beaconId3 = value;
-                OnPropertyChanged();
+                var versionExpression = new Regex("Version=(?<version>[0-9.]*)");
+                var match = versionExpression.Match(typeof(MainPage).AssemblyQualifiedName);
+                return match.Success ? match.Groups["version"].Value : null;
             }
         }
 

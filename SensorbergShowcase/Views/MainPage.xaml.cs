@@ -1,17 +1,13 @@
-﻿using SensorbergSDK;
-using SensorbergShowcase.Utils;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Email;
 using Windows.Foundation;
-using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -23,14 +19,18 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using MetroLog;
-using Newtonsoft.Json;
+using Microsoft.Practices.Unity;
+using Prism.Unity.Windows;
+using Prism.Windows.Navigation;
 using SensorbergControlLibrary.Controls;
 using SensorbergControlLibrary.Model;
+using SensorbergSDK;
 using SensorbergSDK.Internal;
-using SensorbergSDK.Internal.Services;
+using SensorbergShowcase.Controls;
 using SensorbergShowcase.Model;
+using SensorbergShowcase.Utils;
 
-namespace SensorbergShowcase.Pages
+namespace SensorbergShowcase.Views
 {
     /// <summary>
     /// Construction and navigation related main page implementation reside here.
@@ -54,6 +54,7 @@ namespace SensorbergShowcase.Pages
         public const string TIMER_CLASS_NAME = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask";
         public const string ADVERTISEMENT_CLASS_NAME = "SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask";
 
+        public ICommand AboutCommand { get; } = new AboutCommand();
 
         public MainPage()
         {
@@ -63,9 +64,17 @@ namespace SensorbergShowcase.Pages
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (hub != null && scannerControl == null)
+            if (sender == this && BeaconSection != null)
             {
                 scannerControl = FindChildControl<ScannerControl>(BeaconSection, "ScannerControl");
+            }
+            else
+            {
+                ScannerControl control = sender as ScannerControl;
+                if (control != null)
+                {
+                    scannerControl = control;
+                }
             }
         }
 
@@ -163,43 +172,6 @@ namespace SensorbergShowcase.Pages
             }
         }
 
-        /// <summary>
-        /// Creates and displays a message dialog containing the current status of the SDK and Bluetooth.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void OnCheckStatusButtonClickedAsync(object sender, RoutedEventArgs e)
-        {
-            string statusAsContentString = App.ResourceLoader.GetString("bluetooth/Text") + ": ";
-
-            if (await DeviceUtils.GetIsBluetoothSupportedAsync())
-            {
-                if (await DeviceUtils.GetIsBluetoothEnabledAsync())
-                {
-                    statusAsContentString += App.ResourceLoader.GetString("enabled/Text");
-                }
-                else
-                {
-                    statusAsContentString += App.ResourceLoader.GetString("disabled/Text");
-                }
-            }
-            else
-            {
-                statusAsContentString += App.ResourceLoader.GetString("notSupported/Text");
-            }
-
-            statusAsContentString +=
-                "\n" + App.ResourceLoader.GetString("apiKey/Text") + ": "
-                + (Model.IsApiKeyValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"))
-                + "\n" + App.ResourceLoader.GetString("beaconLayout/Text") + ": "
-                + (Model.IsLayoutValid ? App.ResourceLoader.GetString("valid/Text") : App.ResourceLoader.GetString("invalid/Text"));
-
-            MessageDialog messageDialog = new MessageDialog(
-                statusAsContentString,
-                App.ResourceLoader.GetString("status/Text"));
-
-            await messageDialog.ShowAsync();
-        }
         private T FindChildControl<T>(DependencyObject control, string ctrlName) where T : DependencyObject
         {
             int childNumber = VisualTreeHelper.GetChildrenCount(control);
@@ -281,6 +253,34 @@ namespace SensorbergShowcase.Pages
             UpdateBeaconCountInHeader(beaconCount);
         }
     }
+
+    public class AboutCommand : ICommand
+    {
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public async void Execute(object parameter)
+        {
+            if (Util.IsDesktop)
+            {
+                ContentDialog dialog = new ContentDialog();
+                dialog.IsPrimaryButtonEnabled = true;
+                dialog.PrimaryButtonText = "Ok";
+                dialog.Title = "About";
+                dialog.Content = new AboutControl();
+                await dialog.ShowAsync();
+            }
+            else
+            {
+                PrismUnityApplication.Current.Container.Resolve<INavigationService>().Navigate("About", null);
+            }
+        }
+
+        public event EventHandler CanExecuteChanged;
+    }
+
     public class SendLogsCommand : ICommand
     {
         public event EventHandler CanExecuteChanged;

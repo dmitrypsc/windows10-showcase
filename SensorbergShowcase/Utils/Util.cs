@@ -4,7 +4,10 @@
 // 
 // All rights reserved.
 
+using System;
 using Windows.System.Profile;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace SensorbergShowcase.Utils
 {

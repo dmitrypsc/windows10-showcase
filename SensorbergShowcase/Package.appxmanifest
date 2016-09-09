@@ -22,14 +22,14 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask">
-          <BackgroundTasks>
-            <Task Type="timer" />
-          </BackgroundTasks>
-        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask">
           <BackgroundTasks>
             <Task Type="bluetooth" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask">
+          <BackgroundTasks>
+            <Task Type="timer" />
           </BackgroundTasks>
         </Extension>
       </Extensions>
@@ -39,5 +39,6 @@
     <Capability Name="internetClient" />
     <DeviceCapability Name="bluetooth" />
     <DeviceCapability Name="webcam" />
+    <DeviceCapability Name="location" />
   </Capabilities>
 </Package>

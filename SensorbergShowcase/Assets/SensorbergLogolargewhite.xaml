@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file is compatible with Silverlight-->
+<Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="svg2" Width="72" Height="39">
+  <Canvas.RenderTransform>
+    <TranslateTransform X="0" Y="0"/>
+  </Canvas.RenderTransform>
+  <Canvas.Resources/>
+  <!--Unknown tag: metadata-->
+  <!--Unknown tag: sodipodi:namedview-->
+  <Canvas Name="Win10App">
+    <Canvas Name="v1Tablet/Desktop">
+      <Canvas.RenderTransform>
+        <TranslateTransform X="-925.000000" Y="-714.000000"/>
+      </Canvas.RenderTransform>
+      <Canvas Name="SensorbergLogolargewhite">
+        <Canvas.RenderTransform>
+          <TranslateTransform X="925.000000" Y="714.000000"/>
+        </Canvas.RenderTransform>
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="CombinedShape" Fill="#FFFFFFFF" StrokeThickness="1" Data="M52.6153846 14.8571429 L72 39 L33.2307692 39 L52.6153846 14.8571429 Z M31.3846154 0 C31.3846154 0 46.1538454 18.5714277 46.1538462 18.5714286 C46.1538469 18.5714295 29.5384615 39 29.5384615 39 L0 39 L31.3846154 0 Z"/>
+      </Canvas>
+    </Canvas>
+  </Canvas>
+</Canvas>

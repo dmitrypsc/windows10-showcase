@@ -291,4 +291,10 @@
   <data name="bgTaskStatusOk.Text" xml:space="preserve">
     <value>Background Task registered</value>
   </data>
+  <data name="AboutButton.Icon" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="AboutButton.Label" xml:space="preserve">
+    <value>About</value>
+  </data>
 </root>
