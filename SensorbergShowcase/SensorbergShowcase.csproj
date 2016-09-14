@@ -104,39 +104,26 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AdvertiserControl.xaml.cs">
-      <DependentUpon>AdvertiserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\BeaconDetailsControl.xaml.cs">
-      <DependentUpon>BeaconDetailsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ScannerControl.xaml.cs">
-      <DependentUpon>ScannerControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SettingsControl.xaml.cs">
-      <DependentUpon>SettingsControl.xaml</DependentUpon>
+    <Compile Include="Controls\AboutControl.xaml.cs">
+      <DependentUpon>AboutControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertValueConverter.cs" />
     <Compile Include="Converters\SpecialConverters.cs" />
-    <Compile Include="Model\BeaconDetailsItem.cs" />
-    <Compile Include="Model\BeaconDetailsModel.cs" />
     <Compile Include="Model\MainPageModel.cs" />
-    <Compile Include="Pages\MainPage.xaml.cs">
+    <Compile Include="Views\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPage.xaml.Resolver.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\MainPage.xaml.Scanner.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\QrCodeScannerPage.xaml.cs">
+    <Compile Include="Views\QrCodeScannerPage.xaml.cs">
       <DependentUpon>QrCodeScannerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ContinousAutoFocus.cs" />
     <Compile Include="Utils\DeviceUtils.cs" />
+    <Compile Include="Utils\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -154,6 +141,7 @@
     <Content Include="Assets\Graphics\range2.png" />
     <Content Include="Assets\Graphics\range3.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\SensorbergLogolargewhite.svg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -168,31 +156,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\AdvertiserControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\BeaconDetailsControl.xaml">
+    <Page Include="Assets\SensorbergLogolargewhite.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ScannerControl.xaml">
+    <Page Include="Controls\AboutControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SettingsControl.xaml">
+    <Page Include="Views\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPage.DeviceFamily-Mobile.xaml">
+    <Page Include="Views\MainPage.DeviceFamily-Mobile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPage.xaml">
+    <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\QrCodeScannerPage.xaml">
+    <Page Include="Views\QrCodeScannerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

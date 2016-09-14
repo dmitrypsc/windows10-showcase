@@ -1,9 +1,11 @@
 ﻿{
   "dependencies": {
-    "HockeySDK.UWP": "4.1.3",
+    "HockeySDK.UWP": "4.1.4",
     "MetroLog": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "SensorbergSDK": "1.0.83-beta",
+    "Mntone.SvgForXaml": "0.9.0",
+    "Prism.Unity": "6.2.0",
+    "SensorbergSDK": "1.2.108",
     "ZXing.Net": "0.14.0.1"
   },
   "frameworks": {
