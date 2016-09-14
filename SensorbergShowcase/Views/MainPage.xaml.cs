@@ -260,6 +260,10 @@ namespace SensorbergShowcase.Views
 
         private void SettingsControl_OnBeaconNotificationChanged(bool obj)
         {
+            if (Util.IsIoT)
+            {
+                return;
+            }
             Model.AreActionsEnabled = obj;
         }
     }
