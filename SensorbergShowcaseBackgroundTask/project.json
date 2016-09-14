@@ -1,7 +1,7 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "SensorbergSDK": "1.0.83-beta"
+    "SensorbergSDK": "1.1.103-beta"
   },
   "frameworks": {
     "uap10.0": {}

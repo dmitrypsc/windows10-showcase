@@ -4,7 +4,7 @@
     "MetroLog": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Mntone.SvgForXaml": "0.9.0",
-    "SensorbergSDK": "1.1.91-beta",
+    "Prism.Unity": "6.2.0",
     "ZXing.Net": "0.14.0.1"
   },
   "frameworks": {

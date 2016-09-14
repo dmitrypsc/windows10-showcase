@@ -68,11 +68,7 @@ namespace SensorbergShowcase.Views
         /// This is the primary means to provide the result for the main page, since Frame.GoBack
         /// won't take a parameter.
         /// </summary>
-        public static string ScannedQrCode
-        {
-            get;
-            private set;
-        }
+        public static string ScannedQrCode { get; private set; }
 
         /// <summary>
         /// Checks if the device has a camera device.
@@ -101,7 +97,7 @@ namespace SensorbergShowcase.Views
             {
                 Options = new DecodingOptions
                 {
-                    PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE, BarcodeFormat.CODE_128 },
+                    PossibleFormats = new BarcodeFormat[] {BarcodeFormat.QR_CODE, BarcodeFormat.CODE_128},
                     TryHarder = true
                 }
             };
@@ -110,8 +106,6 @@ namespace SensorbergShowcase.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             ScannedQrCode = null;
             await InitializeAndStartScanningAsync();
         }
@@ -119,8 +113,6 @@ namespace SensorbergShowcase.Views
         protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
             await CleanupAsync();
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
             base.OnNavigatedFrom(e);
         }
 
@@ -275,8 +267,8 @@ namespace SensorbergShowcase.Views
 
                         // Only mirror the preview if the camera is on the front panel
                         _mirroringPreview =
-                            (cameraDevice.EnclosureLocation.Panel
-                                == Windows.Devices.Enumeration.Panel.Front);
+                        (cameraDevice.EnclosureLocation.Panel
+                         == Windows.Devices.Enumeration.Panel.Front);
                     }
 
                     await StartPreviewAsync();
@@ -326,7 +318,8 @@ namespace SensorbergShowcase.Views
             // Set the preview source in the UI and mirror it if necessary
             captureElement.Source = _mediaCapture;
             captureElement.FlowDirection = _mirroringPreview
-                ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
 
             // Start the preview
             await _mediaCapture.StartPreviewAsync();
@@ -371,7 +364,7 @@ namespace SensorbergShowcase.Views
             {
                 _analyzingFrame = true;
                 var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
-                var videoFrame = new VideoFrame(BitmapPixelFormat.Bgra8, (int)previewProperties.Width, (int)previewProperties.Height);
+                var videoFrame = new VideoFrame(BitmapPixelFormat.Bgra8, (int) previewProperties.Width, (int) previewProperties.Height);
 
                 using (var currentFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame))
                 {
@@ -439,7 +432,7 @@ namespace SensorbergShowcase.Views
             // The rotation direction needs to be inverted if the preview is being mirrored
             if (_mirroringPreview)
             {
-                rotationDegrees = (360 - rotationDegrees) % 360;
+                rotationDegrees = (360 - rotationDegrees)%360;
             }
 
             // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
@@ -578,17 +571,6 @@ namespace SensorbergShowcase.Views
             System.Diagnostics.Debug.WriteLine("QrCodeScannerPage.OnMediaCaptureFailedAsync: (0x{0:X}) {1}",
                 errorEventArgs.Code, errorEventArgs.Message);
             Frame.GoBack(); // Cleanup will happen in OnNavigatedFrom
-        }
-
-        /// <summary>
-        /// Navigates back to the previous page.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnBackRequested(object sender, BackRequestedEventArgs e)
-        {
-            Frame.GoBack(); // Cleanup will happen in OnNavigatedFrom
-            e.Handled = true;
         }
     }
 }

@@ -26,6 +26,7 @@ using SensorbergControlLibrary.Controls;
 using SensorbergControlLibrary.Model;
 using SensorbergSDK;
 using SensorbergSDK.Internal;
+using SensorbergSDK.Internal.Utils;
 using SensorbergShowcase.Controls;
 using SensorbergShowcase.Model;
 using SensorbergShowcase.Utils;
@@ -105,6 +106,10 @@ namespace SensorbergShowcase.Views
         {
             Logger.Debug("Beacon action resolved" + e.Body + ", " + e.Payload);
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Model.ActionResolved(e));
+            if (Model.AreActionsEnabled)
+            {
+                NotificationUtils.ShowToastNotification(NotificationUtils.CreateToastNotification(e));
+            }
         }
 
         private async void SettingsControl_OnApiKeyChanged(string apiKey)
@@ -251,6 +256,11 @@ namespace SensorbergShowcase.Views
             ObservableCollection<BeaconDetailsItem> collection = sender as ObservableCollection<BeaconDetailsItem>;
             int beaconCount = (collection != null) ? collection.Count : 0;
             UpdateBeaconCountInHeader(beaconCount);
+        }
+
+        private void SettingsControl_OnBeaconNotificationChanged(bool obj)
+        {
+            Model.AreActionsEnabled = obj;
         }
     }
 

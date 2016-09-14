@@ -87,8 +87,8 @@
                 </HubSection.Header>
                 <HubSection.ContentTemplate>
                     <DataTemplate x:DataType="views:MainPage">
-                        <controls:SettingsControl ApiKey="{x:Bind Model.ApiKey, Mode=TwoWay}"
-                                                  ApiKeyChanged="SettingsControl_OnApiKeyChanged" Width="350" />
+                        <controls:SettingsControl ApiKey="{x:Bind Model.ApiKey, Mode=TwoWay}" ApiKeyChanged="SettingsControl_OnApiKeyChanged"
+                                                  BeaconNotificationEnable="{x:Bind Model.AreActionsEnabled}" BeaconNotificationChanged="SettingsControl_OnBeaconNotificationChanged" Width="350" />
                     </DataTemplate>
                 </HubSection.ContentTemplate>
             </HubSection>
@@ -117,6 +117,7 @@
                     <DataTemplate x:DataType="views:MainPage">
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -157,13 +158,19 @@
 
                             <TextBlock Grid.Row="5" Text="SDK Verion:" />
                             <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,0"
-                                       Text="{x:Bind Model.SdkManager.Status.Version}"
+                                       Text="{x:Bind Model.SdkManager.Status.SDKVersion}"
                                        HorizontalAlignment="Right" />
 
                             <TextBlock Grid.Row="6" Text="App Version:" />
                             <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,0"
                                        Text="{x:Bind Model.AppVersion, Mode=OneWay}"
                                        HorizontalAlignment="Right" />
+
+                            <TextBlock Grid.Row="7" Text="Last updated:" />
+                            <TextBlock Grid.Row="7" Grid.Column="1" Margin="10,0,0,0"
+                                       Text="{x:Bind Model.SdkManager.Status.LastUpdate, Mode=OneWay}"
+                                       HorizontalAlignment="Right" />
+
                         </Grid>
                     </DataTemplate>
                 </HubSection.ContentTemplate>

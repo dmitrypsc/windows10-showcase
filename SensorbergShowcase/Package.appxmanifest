@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="sensorberg.SensorbergShowcase" Publisher="CN=0C3A31AC-B95A-4734-BD23-3B125CF4EA05" Version="1.1.16.0" />
+  <Identity Name="sensorberg.SensorbergShowcase" Publisher="CN=0C3A31AC-B95A-4734-BD23-3B125CF4EA05" Version="1.1.26.0" />
   <mp:PhoneIdentity PhoneProductId="1df83898-c575-41f3-899c-721d0176828d" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Sensorberg Showcase</DisplayName>
@@ -22,14 +22,14 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask">
-          <BackgroundTasks>
-            <Task Type="bluetooth" />
-          </BackgroundTasks>
-        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="SensorbergShowcaseBackgroundTask.SensorbergShowcaseTimedBackgrundTask">
           <BackgroundTasks>
             <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="SensorbergShowcaseBackgroundTask.SensorbergShowcaseAdvertisementBackgroundTask">
+          <BackgroundTasks>
+            <Task Type="bluetooth" />
           </BackgroundTasks>
         </Extension>
       </Extensions>

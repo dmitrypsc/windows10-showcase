@@ -187,10 +187,6 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\windows10-sdk\SensorbergControlLibrary\SensorbergControlLibrary.csproj">
-      <Project>{d508e9c4-ea46-4926-8274-76ddbc21470d}</Project>
-      <Name>SensorbergControlLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\windows10-sdk\SensorbergSDK\SensorbergSDK.csproj">
       <Project>{bffec28e-cdd9-45e7-9d77-171836818596}</Project>
       <Name>SensorbergSDK</Name>

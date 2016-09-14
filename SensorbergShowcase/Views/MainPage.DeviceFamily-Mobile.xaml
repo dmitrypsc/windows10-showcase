@@ -69,8 +69,14 @@
                 </Grid>
             </PivotItem>
             <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock
+                        Text="Status"
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                </PivotItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -111,13 +117,19 @@
 
                     <TextBlock Grid.Row="5" Text="SDK Verion:" />
                     <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,0"
-                               Text="{x:Bind Model.SdkManager.Status.Version}"
+                               Text="{x:Bind Model.SdkManager.Status.SDKVersion}"
                                HorizontalAlignment="Right" />
 
                     <TextBlock Grid.Row="6" Text="App Version:" />
                     <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,0"
                                Text="{x:Bind Model.AppVersion, Mode=OneWay}"
                                HorizontalAlignment="Right" />
+
+                    <TextBlock Grid.Row="7" Text="Last updated:" />
+                    <TextBlock Grid.Row="7" Grid.Column="1" Margin="10,0,0,0"
+                                       Text="{x:Bind Model.SdkManager.Status.LastUpdate, Mode=OneWay}"
+                                       HorizontalAlignment="Right" />
+
                 </Grid>
             </PivotItem>
         </Pivot>

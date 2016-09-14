@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -52,7 +53,6 @@ namespace SensorbergShowcase.Model
         private string _headerWithBeaconCount;
         private bool _shouldRegisterBackgroundTask;
         private bool _isBackgroundTaskRegistered;
-        private bool _areActionsEnabled;
         private List<SensorbergApplication> _applications;
         private SensorbergApplication _application;
         private bool _showApiKeySelection;
@@ -75,9 +75,8 @@ namespace SensorbergShowcase.Model
         {
             get
             {
-                var versionExpression = new Regex("Version=(?<version>[0-9.]*)");
-                var match = versionExpression.Match(typeof(MainPage).AssemblyQualifiedName);
-                return match.Success ? match.Groups["version"].Value : null;
+                PackageVersion pv = Package.Current.Id.Version;
+                return $"{pv.Major}.{pv.Minor}.{pv.Build}.{pv.Revision}";
             }
         }
 
@@ -175,10 +174,17 @@ namespace SensorbergShowcase.Model
 
         public bool AreActionsEnabled
         {
-            get { return _areActionsEnabled; }
+            get
+            {
+                if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("AreActionsEnabled"))
+                {
+                    return false;
+                }
+                return (bool) ApplicationData.Current.LocalSettings.Values["AreActionsEnabled"];
+            }
             set
             {
-                _areActionsEnabled = value;
+                ApplicationData.Current.LocalSettings.Values["AreActionsEnabled"] = value;
                 OnPropertyChanged();
             }
         }
