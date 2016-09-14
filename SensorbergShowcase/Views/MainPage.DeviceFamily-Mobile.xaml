@@ -1,0 +1,156 @@
+﻿<Page
+    x:Class="SensorbergShowcase.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SensorbergShowcase"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:SensorbergShowcase.Converters"
+    xmlns:controls="using:SensorbergControlLibrary.Controls"
+    xmlns:views="using:SensorbergShowcase.Views"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:InvertValueConverter x:Key="InvertValueConverter" />
+        <converters:BoolToScannerStateTextConverter x:Key="ScannerStateTextConverter" />
+        <converters:BoolToAdvertisingButtonTextConverter x:Key="AdvertisingButtonTextConverter" />
+        <converters:BoolToBackgroundImageSourceConverter x:Key="BackgroundImageSourceConverter" />
+        <converters:BoolToColorStringConverter x:Key="BoolToColorStringConverter" />
+    </Page.Resources>
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <LinearGradientBrush.Transform>
+                    <CompositeTransform Rotation="-45" TranslateX="600" />
+                </LinearGradientBrush.Transform>
+                <GradientStop Color="#FF002D4D" Offset="0" />
+                <GradientStop Color="#3023AE" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <!-- Pivot is used on smaller screen (phones) -->
+        <Pivot
+            x:Name="pivot"
+            DataContext="{x:Bind}">
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock
+                        Style="{StaticResource SubheaderTextBlockStyle}"
+                        Text="{x:Bind Model.HeaderWithBeaconCount, Mode=OneWay}" />
+                </PivotItem.Header>
+                <controls:ScannerControl Loaded="MainPage_Loaded"
+                                         BeaconCollectionChanged="OnBeaconDetailsCollectionChanged" />
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock
+                        x:Uid="advertise"
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                </PivotItem.Header>
+                <controls:AdvertiserControl />
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock
+                        x:Uid="settings"
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                </PivotItem.Header>
+                <controls:SettingsControl ApiKey="{x:Bind Model.ApiKey, Mode=TwoWay}"
+                                          ApiKeyChanged="SettingsControl_OnApiKeyChanged" />
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock
+                        x:Uid="actions"
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                </PivotItem.Header>
+                <Grid>
+                    <ListView ItemsSource="{Binding Model.ResolvedActions}" />
+                </Grid>
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock
+                        Text="Status"
+                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                </PivotItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Api Key valid:" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0,0,0"
+                               Text="{x:Bind Model.SdkManager.Status.IsApiKeyValid, Mode=OneWay}"
+                               HorizontalAlignment="Right" />
+
+                    <TextBlock Grid.Row="1" Text="Beacon scanning:" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="10,0,0,0"
+                               Text="{x:Bind Model.IsScanning, Mode=OneWay}" HorizontalAlignment="Right" />
+
+                    <TextBlock Grid.Row="2" Text="Platform reachable:" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="10,0,0,0"
+                               Text="{x:Bind Model.SdkManager.Status.IsResolverReachable, Mode=OneWay}"
+                               HorizontalAlignment="Right" />
+
+                    <TextBlock Grid.Row="3" Text="Bluetooth enabled:" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,0,0,0"
+                               Text="{x:Bind Model.SdkManager.Status.IsBluetoothEnabled, Mode=OneWay}"
+                               HorizontalAlignment="Right" />
+
+                    <TextBlock Grid.Row="4" Text="Location enabled:" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,0"
+                               Text="{x:Bind Model.SdkManager.Status.IsLocationEnabled, Mode=OneWay}"
+                               HorizontalAlignment="Right" />
+
+
+                    <TextBlock Grid.Row="5" Text="SDK Verion:" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,0"
+                               Text="{x:Bind Model.SdkManager.Status.SDKVersion}"
+                               HorizontalAlignment="Right" />
+
+                    <TextBlock Grid.Row="6" Text="App Version:" />
+                    <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,0"
+                               Text="{x:Bind Model.AppVersion, Mode=OneWay}"
+                               HorizontalAlignment="Right" />
+
+                    <TextBlock Grid.Row="7" Text="Last updated:" />
+                    <TextBlock Grid.Row="7" Grid.Column="1" Margin="10,0,0,0"
+                                       Text="{x:Bind Model.SdkManager.Status.LastUpdate, Mode=OneWay}"
+                                       HorizontalAlignment="Right" />
+
+                </Grid>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarToggleButton
+                x:Name="toggleScanButton"
+                x:Uid="toggleScanner"
+                Icon="Play"
+                IsChecked="{x:Bind Model.IsScanning, Mode=OneWay}"
+                IsEnabled="True"
+                Click="OnToggleScanButtonClickedAsync" />
+            <AppBarButton
+                Icon="Help"
+                x:Uid="AboutButton"
+                Command="{x:Bind AboutCommand}" />
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Label="Logs verschicken" Command="{x:Bind SendLogsCommand}" />
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>
